@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TP-Link Router Manager 2025 (Scheme A)</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <style>
+        /* ==================== 1. 全局变量与基础样式 (与B方案共享) ==================== */
+        :root {
+            --primary-color: #007AFF;
+            --bg-body: #F2F5F9;
+            --sidebar-bg: #FFFFFF;
+            --glass-bg: rgba(255, 255, 255, 0.75);
+            --text-main: #1D1D1F;
+            --text-sub: #86868B;
+            --shadow-soft: 0 8px 30px rgba(0, 0, 0, 0.04);
+            --shadow-hover: 0 15px 35px rgba(0, 122, 255, 0.1);
+            --radius-l: 16px;
+            --radius-xl: 20px;
+            --content-nav-width: 200px; /* 内容页面的二级导航宽度 */
+        }
+
+        * { box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* ==================== 2. 顶部导航栏 (L1) ==================== */
+        .header {
+            height: 64px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 32px 0 20px;
+            z-index: 100;
+            flex-shrink: 0;
+        }
+
+        .logo {
+            font-family: 'Futura', 'Avenir Next', sans-serif;
+            font-weight: 800;
+            font-size: 24px;
+            letter-spacing: -0.5px;
+            background: linear-gradient(135deg, #00C6FF, #0072FF);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-style: italic;
+            margin-right: 30px;
+        }
+        
+        /* L1 Top Nav Styling */
+        .top-nav-l1 { display: flex; align-items: center; gap: 10px; flex-grow: 1; }
+        .nav-l1-item {
+            padding: 10px 18px;
+            margin-right: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            color: var(--text-sub);
+            transition: all 0.2s;
+            position: relative;
+        }
+        .nav-l1-item:hover { color: var(--text-main); }
+        .nav-l1-item.active { color: var(--primary-color); }
+        .nav-l1-item.active::after {
+            content: '';
+            position: absolute;
+            bottom: -15px;
+            left: 10px;
+            right: 10px;
+            height: 3px;
+            background: var(--primary-color);
+            border-radius: 2px 2px 0 0;
+        }
+
+        /* Header Icons */
+        .header-icons { display: flex; gap: 20px; }
+        .icon-btn { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--text-sub); transition: all 0.2s; background: rgba(255,255,255,0.5); }
+        .icon-btn:hover { background: #fff; color: var(--primary-color); }
+
+        /* ==================== 3. 主内容区 (Main Content Area) ==================== */
+        .main-container { display: flex; flex: 1; overflow: hidden; }
+
+        /* 内容侧边栏 (L2 Nav) */
+        .content-nav-sidebar {
+            width: var(--content-nav-width);
+            background: #fff;
+            padding: 30px 0;
+            flex-shrink: 0;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.02);
+            overflow-y: auto;
+        }
+        .nav-l2-item {
+            padding: 10px 24px;
+            font-size: 15px;
+            color: var(--text-sub);
+            cursor: pointer;
+            transition: all 0.2s;
+            border-left: 3px solid transparent;
+        }
+        .nav-l2-item:hover { color: var(--text-main); background: rgba(0,0,0,0.02); }
+        .nav-l2-item.active { color: var(--primary-color); font-weight: 600; background: rgba(0, 122, 255, 0.05); border-left-color: var(--primary-color); }
+
+        /* 内容面板 */
+        .content-panel {
+            flex: 1;
+            padding: 40px;
+            overflow-y: auto;
+            background: var(--bg-body);
+        }
+
+        /* L1 叶节点配置页 (无 L2 导航时) */
+        .leaf-config-view {
+             background: #fff;
+            border-radius: var(--radius-l);
+            padding: 30px;
+            max-width: 700px;
+            box-shadow: var(--shadow-soft);
+        }
+
+        /* 通用配置项样式 */
+        .setting-row { display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 1px solid #f0f0f5; }
+        .setting-info h4 { margin: 0 0 4px 0; }
+        .setting-info p { margin: 0; font-size: 12px; color: var(--text-sub); }
+        
+        /* L3 Card/Config Styles (Using B-Scheme styles for consistency) */
+        .grid-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 24px; }
+        .card { background: #fff; border-radius: var(--radius-l); padding: 24px; box-shadow: var(--shadow-soft); cursor: pointer; transition: all 0.3s; border: 1px solid transparent; position: relative; overflow: hidden; }
+        .card:hover { transform: translateY(-4px); box-shadow: var(--shadow-hover); border-color: rgba(0,122,255,0.3); }
+        .card h3 { margin: 0 0 8px 0; font-size: 18px; color: var(--text-main); }
+        .card p { margin: 0; font-size: 13px; color: var(--text-sub); line-height: 1.5; }
+        .back-btn { display: inline-flex; align-items: center; gap: 8px; color: var(--primary-color); font-weight: 600; cursor: pointer; margin-bottom: 20px; padding: 8px 16px; background: rgba(0, 122, 255, 0.1); border-radius: 20px; transition: 0.2s; }
+        
+        /* Network Map Specific Styles (Inherited) */
+        /* ... [Network Map styles are omitted here for brevity, but assumed to be present] ... */
+
+    </style>
+</head>
+<body>
+
+    <header class="header">
+        <div class="logo">TP-Link</div>
+        <nav class="top-nav-l1">
+            <div class="nav-l1-item active" data-id="Network Map" onclick="handleL1Nav('Network Map', 'leaf', this)">Network Map</div>
+            <div class="nav-l1-item" data-id="WiFi Settings" onclick="handleL1Nav('WiFi Settings', 'leaf', this)">WiFi Settings</div>
+            <div class="nav-l1-item" data-id="Internet Connection" onclick="handleL1Nav('Internet Connection', 'leaf', this)">Internet Connection</div>
+            <div class="nav-l1-item" data-id="HomeShield" onclick="handleL1Nav('HomeShield', 'parent', this)">HomeShield</div>
+            <div class="nav-l1-item" data-id="Advanced" onclick="handleL1Nav('Advanced', 'parent', this)">Advanced</div>
+        </nav>
+        <div class="header-icons">
+            <div class="icon-btn" title="Language Settings"><i class="fas fa-globe"></i></div>
+            <div class="icon-btn" title="Accessibility Settings"><i class="fas fa-universal-access"></i></div>
+        </div>
+    </header>
+
+    <div class="main-container">
+        <aside class="content-nav-sidebar" id="l2-nav-container" style="display:none;">
+            </aside>
+
+        <main class="content-panel" id="content-area">
+            <div class="page-header-text">
+                <h1 class="page-title">Network Map</h1>
+                <p class="page-desc">Real-time topology and traffic insights.</p>
+            </div>
+            <div id="network-map-content">
+                <p>--- Network Map 拓扑图、仪表盘、客户端卡片内容将在此处显示 (参考 B 方案) ---</p>
+                <div class="leaf-config-view">
+                    <div class="setting-row">
+                        <div class="setting-info"><h4>Network Status</h4><p>Current status of the network.</p></div>
+                        <span>Online</span>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // ==================== 数据定义 (L2 & L3 Hierarchy) ====================
+        const L2_MENU = {
+            "HomeShield": ["Security", "Parental Control"],
+            "Advanced": ["Access Control", "EasyMesh", "QoS", "VPN", "ECO Mode", "TP-Link ID", "LAN Settings", "WAN Settings", "WPS", "Security Utilities", "System"]
+        };
+
+        const L3_CONFIGS = {
+            "LAN Settings": [ { name: "Flow Controller", desc: "Manage data traffic." }, { name: "DHCP Server", desc: "Assign IP addresses." } ],
+            "WAN Settings": [ { name: "DDNS", desc: "Remote access domain." }, { name: "Port Forwarding", desc: "Forward internal ports." } ],
+            // ... (Other L3 configurations omitted for demo brevity, but assumed to exist)
+        };
+        
+        let currentL1Parent = "Network Map"; // 跟踪当前顶部选中项
+        
+        // ==================== L1/L2 导航处理 ====================
+
+        function handleL1Nav(title, type, el) {
+            // 1. 顶部 L1 导航激活状态
+            document.querySelectorAll('.nav-l1-item').forEach(e => e.classList.remove('active'));
+            el.classList.add('active');
+            currentL1Parent = title;
+
+            // 2. 隐藏/显示 L2 侧边栏
+            const l2NavContainer = document.getElementById('l2-nav-container');
+            const contentArea = document.getElementById('content-area');
+
+            if (type === 'parent') {
+                // 加载 L2 菜单
+                loadL2Sidebar(title);
+                l2NavContainer.style.display = 'block';
+                contentArea.style.paddingLeft = '0'; // 避免双重 padding
+                
+                // 默认加载该 L1 下的第一个 L2 功能
+                const defaultL2 = L2_MENU[title][0];
+                renderContent(defaultL2, 'leaf'); // 默认加载 L2 叶节点
+                
+            } else {
+                // L1 叶节点: 隐藏 L2 导航
+                l2NavContainer.style.display = 'none';
+                contentArea.style.paddingLeft = '40px'; // 恢复 padding
+                renderContent(title, 'leaf'); // 直接渲染 L1 内容
+            }
+        }
+
+        function loadL2Sidebar(l1Title) {
+            const l2Container = document.getElementById('l2-nav-container');
+            const l2Items = L2_MENU[l1Title];
+            
+            l2Container.innerHTML = ''; // 清空旧菜单
+            l2Items.forEach((l2Item, index) => {
+                const isL3Parent = L3_CONFIGS[l2Item];
+                const contentType = isL3Parent ? 'menu' : 'leaf';
+                
+                const itemDiv = document.createElement('div');
+                itemDiv.className = 'nav-l2-item';
+                itemDiv.textContent = l2Item;
+                itemDiv.onclick = () => handleL2Nav(l2Item, contentType, itemDiv);
+                
+                if (index === 0) {
+                    itemDiv.classList.add('active'); // 默认激活第一个 L2
+                }
+                
+                l2Container.appendChild(itemDiv);
+            });
+        }
+        
+        function handleL2Nav(title, type, el) {
+            // L2 导航激活状态
+            document.querySelectorAll('.nav-l2-item').forEach(e => e.classList.remove('active'));
+            el.classList.add('active');
+
+            renderContent(title, type);
+        }
+
+
+        // ==================== 内容渲染逻辑 (Content Rendering) ====================
+
+        function renderContent(title, type, isL3 = false, parentTitle = '') {
+            const container = document.getElementById('content-area');
+            let contentHtml = '';
+
+            if (title === 'Network Map') {
+                // L1 叶节点 - Network Map (特殊处理)
+                // Note: The full Network Map rendering logic from Scheme B is assumed here.
+                contentHtml = `<div class="page-header-text">
+                    <h1 class="page-title">Network Map</h1>
+                    <p class="page-desc">Real-time topology and traffic insights.</p>
+                </div>
+                <div class="leaf-config-view">
+                    <p>--- Network Map 拓扑图和应用流量洞察内容 ---</p>
+                    <div class="setting-row"><div class="setting-info"><h4>Devices Online</h4></div><span>${clientsData.length}</span></div>
+                    <div class="setting-row"><div class="setting-info"><h4>Internet Status</h4></div><span style="color:var(--primary-color)">Connected</span></div>
+                </div>`;
+            } else if (isL3) {
+                // L3 配置页
+                contentHtml = renderL3Config(title, parentTitle);
+            } else if (type === 'menu' && L3_CONFIGS[title]) {
+                // L2 菜单页 (包含 L3 卡片)
+                contentHtml = renderL2CardMenuContent(title);
+            } else {
+                // L1/L2 叶节点 (简单配置页)
+                contentHtml = renderLeafConfig(title);
+            }
+            
+            container.innerHTML = contentHtml;
+        }
+
+        // --- L2 菜单页 (卡片) ---
+        function renderL2CardMenuContent(title) {
+            const items = L3_CONFIGS[title];
+            const cardsHtml = items.map(item => `
+                <div class="card" onclick="renderContent('${item.name}', 'config', true, '${title}')">
+                    <h3>${item.name}</h3>
+                    <p>${item.desc}</p>
+                    <i class="fas fa-arrow-right card-arrow"></i>
+                </div>
+            `).join('');
+
+            return `
+                <div class="page-header-text">
+                    <h1 class="page-title">${title}</h1>
+                    <p class="page-desc">Select a specific setting to configure.</p>
+                </div>
+                <div class="grid-cards">
+                    ${cardsHtml}
+                </div>
+            `;
+        }
+
+        // --- L3 配置详情页 ---
+        function renderL3Config(title, parentTitle) {
+            return `
+                <div class="back-btn" onclick="renderContent('${parentTitle}', 'menu')"><i class="fas fa-arrow-left"></i> Back to ${parentTitle}</div>
+                
+                <div class="config-view">
+                    <h2 style="margin-top:0">${title} Configuration</h2>
+                    <p style="color:var(--text-sub); margin-bottom:30px;">This is the dedicated setup page for ${title}.</p>
+                    
+                    <div class="setting-row">
+                        <div class="setting-info">
+                            <h4>Enable ${title}</h4>
+                            <p>Turn the feature on or off.</p>
+                        </div>
+                        <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
+                    </div>
+
+                    <div class="setting-row">
+                        <div class="setting-info">
+                            <h4>IP Address Setting</h4>
+                            <p>Define the static IP used for this service.</p>
+                        </div>
+                        <input type="text" value="192.168.0.250" style="padding:8px; border:1px solid #ddd; border-radius:6px; outline:none; width:200px;">
+                    </div>
+                </div>
+            `;
+        }
+        
+        // --- L1/L2 叶节点配置页 ---
+        function renderLeafConfig(title) {
+            return `
+                <div class="page-header-text">
+                    <h1 class="page-title">${title}</h1>
+                    <p class="page-desc">General configuration and status overview for ${title}.</p>
+                </div>
+                
+                <div class="leaf-config-view">
+                    <h3 style="margin-top:0;">Main Configuration</h3>
+                    
+                    <div class="setting-row">
+                        <div class="setting-info">
+                            <h4>Feature Status</h4>
+                            <p>Current operational state.</p>
+                        </div>
+                        <span style="color:var(--primary-color);">Enabled</span>
+                    </div>
+
+                    <div class="setting-row">
+                        <div class="setting-info">
+                            <h4>Enable Guest Network</h4>
+                            <p>Allow temporary guest access.</p>
+                        </div>
+                        <label class="switch"><input type="checkbox"><span class="slider"></span></label>
+                    </div>
+
+                    <div class="setting-row" style="border-bottom:none;">
+                        <div class="setting-info">
+                            <h4>SSID Name</h4>
+                            <p>The name broadcasted for your WiFi network.</p>
+                        </div>
+                        <input type="text" value="MyHomeNetwork" style="padding:8px; border:1px solid #ddd; border-radius:6px; outline:none; width:200px;">
+                    </div>
+                </div>
+            `;
+        }
+        
+        // --- 页面初始化 ---
+        window.onload = function() {
+            // 模拟点击 Network Map (默认页面)
+            const defaultEl = document.querySelector('[data-id="Network Map"]');
+            handleL1Nav('Network Map', 'leaf', defaultEl);
+        };
+    </script>
+</body>
+</html>

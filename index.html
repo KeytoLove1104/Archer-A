@@ -2,8 +2,8 @@
 <html lang="zh">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TP-Link Demo A: Top Nav + Dynamic Sidebar</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>TP-Link Demo A: Mobile Responsive</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <style>
         /* ==================== 1. 全局变量与基础样式 ==================== */
@@ -11,7 +11,7 @@
             --primary-color: #007AFF;
             --bg-body: #F2F5F9;
             --sidebar-bg: #FFFFFF;
-            --top-nav-bg: rgba(255, 255, 255, 0.9);
+            --top-nav-bg: rgba(255, 255, 255, 0.95);
             --text-main: #1D1D1F;
             --text-sub: #86868B;
             --shadow-soft: 0 8px 30px rgba(0, 0, 0, 0.04);
@@ -26,7 +26,7 @@
             --icon-red: #FF3B30;
         }
 
-        * { box-sizing: border-box; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body {
             font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             margin: 0;
@@ -43,8 +43,8 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            height: 64px;
-            padding: 0 32px;
+            height: 60px;
+            padding: 0 20px;
             background: var(--top-nav-bg);
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
@@ -56,44 +56,51 @@
         .logo {
             font-family: 'Futura', 'Avenir Next', sans-serif;
             font-weight: 800;
-            font-size: 24px;
+            font-size: 20px;
             letter-spacing: -0.5px;
             background: linear-gradient(135deg, #00C6FF, #0072FF);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             font-style: italic;
+            flex-shrink: 0;
+            margin-right: 15px;
         }
         
-        .header-icons { display: flex; gap: 20px; }
+        .header-icons { display: flex; gap: 10px; flex-shrink: 0; }
         .icon-btn {
-            width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; 
+            width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; 
             justify-content: center; cursor: pointer; color: var(--text-sub); transition: all 0.2s; 
             background: rgba(255,255,255,0.5);
         }
-        .icon-btn:hover { background: #fff; color: var(--primary-color); box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
 
-        /* L1 顶部导航 */
+        /* L1 顶部导航 - 桌面端样式 */
         .l1-nav-bar {
             display: flex;
-            gap: 10px;
-            margin-left: 30px;
+            gap: 5px;
+            margin-left: 20px;
+            flex: 1;
+            overflow-x: auto; /* 允许横向滚动 */
+            scrollbar-width: none; /* Firefox 隐藏滚动条 */
+            -ms-overflow-style: none; /* IE/Edge 隐藏滚动条 */
         }
+        .l1-nav-bar::-webkit-scrollbar { display: none; /* Chrome 隐藏滚动条 */ }
+
         .nav-l1-top {
-            padding: 8px 15px;
+            padding: 6px 12px;
             border-radius: 8px;
             cursor: pointer;
             display: flex;
             align-items: center;
-            gap: 8px;
-            font-size: 18px;
-            font-weight: 700;
+            gap: 6px;
+            font-size: 15px;
+            font-weight: 600;
             color: var(--text-sub);
             transition: all 0.2s;
+            white-space: nowrap; /* 防止换行 */
         }
-        .nav-l1-top:hover { background: rgba(0,0,0,0.03); }
         .nav-l1-top.active { color: var(--primary-color); background: rgba(0, 122, 255, 0.1); }
-
-        .nav-l1-top i { font-size: 16px; }
+        .nav-l1-top i { font-size: 14px; }
+        
         .icon-top-blue { color: var(--icon-blue); }
         .icon-top-purple { color: var(--icon-purple); }
         .icon-top-teal { color: var(--icon-teal); }
@@ -101,7 +108,7 @@
         .icon-top-red { color: var(--icon-red); }
 
         /* ==================== 3. 主容器与动态侧边栏 ==================== */
-        .container { display: flex; flex: 1; overflow: hidden; }
+        .container { display: flex; flex: 1; overflow: hidden; position: relative; }
 
         .sidebar-wrapper {
             width: var(--sidebar-width);
@@ -110,8 +117,11 @@
             padding: 24px 0;
             overflow-y: auto;
             flex-shrink: 0;
-            transition: width 0.3s ease-in-out;
+            transition: transform 0.3s ease-in-out, width 0.3s;
+            z-index: 90;
         }
+        
+        /* 桌面端隐藏逻辑 */
         .sidebar-hidden {
             width: 0;
             padding: 0;
@@ -120,7 +130,7 @@
         }
 
         .nav-l2-item {
-            padding: 10px 24px;
+            padding: 12px 24px;
             cursor: pointer;
             display: flex;
             align-items: center;
@@ -128,22 +138,17 @@
             font-size: 15px;
             font-weight: 500;
             color: var(--text-main);
-            transition: background 0.2s;
         }
-        .nav-l2-item:hover { background: rgba(0, 122, 255, 0.05); }
         .nav-l2-item.active { background: rgba(0, 122, 255, 0.1); color: var(--primary-color); border-left: 3px solid var(--primary-color); padding-left: 21px; font-weight: 600; }
         .nav-l2-item.parent .chevron { transition: transform 0.3s; }
         .nav-l2-item.parent.expanded .chevron { transform: rotate(180deg); }
 
         .nav-l3-container { display: none; }
         .nav-l3-item {
-            padding: 8px 24px 8px 48px;
+            padding: 10px 24px 10px 48px;
             font-size: 14px;
             color: var(--text-sub);
-            transition: all 0.2s;
-            cursor: pointer;
         }
-        .nav-l3-item:hover { background: rgba(0,0,0,0.03); color: var(--text-main); }
         .nav-l3-item.active { background: rgba(0, 122, 255, 0.05); color: var(--primary-color); font-weight: 500; }
 
         /* 内容区域 */
@@ -151,151 +156,148 @@
             flex: 1;
             padding: 40px;
             overflow-y: auto;
-            /* 确保内容居中 */
             display: flex;
             flex-direction: column;
             align-items: center; 
+            width: 100%;
         }
 
-        /* 统一内容最大宽度容器，防止大屏散开 */
-        .content-wrapper {
-            width: 100%;
-            max-width: 1100px; /* 限制最大宽度，保持和谐 */
-        }
+        .content-wrapper { width: 100%; max-width: 1100px; }
         
-        /* 页面标题居中 */
         .page-header-text { text-align: center; margin-bottom: 40px; }
-        .page-title { font-size: 32px; font-weight: 800; margin: 0 0 8px 0; color: var(--text-main); }
-        .page-desc { color: var(--text-sub); margin: 0; }
+        .page-title { font-size: 28px; font-weight: 800; margin: 0 0 8px 0; color: var(--text-main); }
+        .page-desc { color: var(--text-sub); margin: 0; font-size: 14px; }
 
-        /* ==================== Network Map 专属居中样式 ==================== */
-        
-        /* 仪表盘 */
-        .dashboard-header { 
-            display: flex; 
-            gap: 24px; 
-            margin-bottom: 50px; 
-            justify-content: center; /* 居中对齐 */
-        }
+        /* ==================== Network Map Styles ==================== */
+        .dashboard-header { display: flex; gap: 24px; margin-bottom: 50px; justify-content: center; }
         .stat-card { 
-            width: 280px; /* 固定宽度，更整齐 */
-            background: #fff; 
-            padding: 24px; 
-            border-radius: var(--radius-l); 
-            box-shadow: var(--shadow-soft); 
-            display: flex; 
-            align-items: center; 
-            gap: 15px; 
-            transition: transform 0.2s;
+            width: 280px; background: #fff; padding: 20px; border-radius: 16px; 
+            box-shadow: var(--shadow-soft); display: flex; align-items: center; gap: 15px; 
         }
-        .stat-card:hover { transform: translateY(-2px); }
-        .stat-icon { width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; }
-        .stat-val { font-size: 24px; font-weight: 800; font-family: 'Futura', sans-serif; }
-        .stat-label { font-size: 12px; color: var(--text-sub); margin-bottom: 4px; }
+        .stat-icon { width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+        .stat-val { font-size: 20px; font-weight: 800; font-family: 'Futura', sans-serif; }
 
-        /* 拓扑区域 */
-        .topology-area { 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            width: 100%;
-        }
-
-        /* 路由器节点 */
+        .topology-area { display: flex; flex-direction: column; align-items: center; width: 100%; }
+        
         .router-node { 
-            width: 320px; 
-            background: #fff; 
-            border: 2px solid var(--primary-color); 
-            border-radius: var(--radius-l); 
-            padding: 24px; 
-            text-align: center; 
-            position: relative; 
-            z-index: 2; 
-            margin-bottom: 60px; /* 增加间距 */
-            box-shadow: 0 10px 40px rgba(0, 122, 255, 0.15); 
+            width: 300px; background: #fff; border: 2px solid var(--primary-color); 
+            border-radius: 16px; padding: 20px; text-align: center; position: relative; 
+            z-index: 2; margin-bottom: 60px; box-shadow: 0 10px 40px rgba(0, 122, 255, 0.15); 
         }
         .router-node::after { 
-            content: ''; 
-            position: absolute; 
-            bottom: -62px; /* 延伸到下方 */
-            left: 50%; 
-            width: 2px; 
-            height: 62px; 
-            background: #E5E5EA; 
-            z-index: 1; 
+            content: ''; position: absolute; bottom: -62px; left: 50%; width: 2px; 
+            height: 62px; background: #E5E5EA; z-index: 1; 
         }
 
-        /* 客户端网格 - 改为 Flexbox 实现完美居中 */
+        /* 客户端网格 */
         .clients-grid { 
-            display: flex;
-            justify-content: center; /* 居中 */
-            flex-wrap: wrap;
-            gap: 30px; 
-            width: 100%; 
-            position: relative; 
+            display: flex; justify-content: center; flex-wrap: wrap; gap: 30px; 
+            width: 100%; position: relative; 
         }
-        /* 连接横线 */
+        /* 连接横线 (桌面端) */
         .clients-grid::before { 
-            content: ''; 
-            position: absolute; 
-            top: -30px; 
-            /* 限制横线宽度，使其不显得太宽 */
-            left: 50%;
-            transform: translateX(-50%);
-            width: 80%; /* 横跨 80% 的区域 */
-            max-width: 600px;
-            height: 2px; 
-            background: #E5E5EA; 
-            z-index: 1; 
+            content: ''; position: absolute; top: -30px; left: 50%; transform: translateX(-50%);
+            width: 80%; max-width: 600px; height: 2px; background: #E5E5EA; z-index: 1; 
         }
 
         .client-card { 
-            background: #fff; 
-            padding: 20px; 
-            border-radius: 16px; 
-            box-shadow: var(--shadow-soft); 
-            position: relative; 
-            width: 300px; /* 固定宽度，整齐 */
-            flex-shrink: 0;
-            transition: all 0.2s;
+            background: #fff; padding: 16px; border-radius: 16px; box-shadow: var(--shadow-soft); 
+            position: relative; width: 300px; flex-shrink: 0; z-index: 2;
         }
-        .client-card:hover { transform: translateY(-4px); box-shadow: 0 15px 35px rgba(0,0,0,0.06); }
         .client-card::before { 
-            content: ''; 
-            position: absolute; 
-            top: -32px; 
-            left: 50%; 
-            width: 2px; 
-            height: 32px; 
-            background: #E5E5EA; 
+            content: ''; position: absolute; top: -32px; left: 50%; width: 2px; 
+            height: 32px; background: #E5E5EA; 
         }
 
-        /* 客户端内部样式 */
         .client-top { display: flex; align-items: center; gap: 12px; border-bottom: 1px solid #f0f0f5; padding-bottom: 12px; margin-bottom: 12px; }
         .traffic-viz { display: flex; align-items: center; gap: 15px; }
-        .donut { width: 60px; height: 60px; border-radius: 50%; position: relative; flex-shrink: 0; }
-        .donut-inner { position: absolute; top: 8px; left: 8px; right: 8px; bottom: 8px; background: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; color: var(--text-sub); }
+        .donut { width: 50px; height: 50px; border-radius: 50%; position: relative; flex-shrink: 0; }
+        .donut-inner { position: absolute; top: 6px; left: 6px; right: 6px; bottom: 6px; background: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 9px; color: var(--text-sub); }
         .app-list { flex: 1; font-size: 11px; }
         .app-item { display: flex; justify-content: space-between; margin-bottom: 4px; align-items: center; }
         .dot { width: 8px; height: 8px; border-radius: 2px; display: inline-block; margin-right: 4px; }
 
         /* 配置视图 */
-        .config-view { background: #fff; border-radius: 20px; padding: 40px; box-shadow: var(--shadow-soft); animation: fadeIn 0.3s ease; text-align: left; }
-        .setting-row { display: flex; justify-content: space-between; align-items: center; padding: 20px 0; border-bottom: 1px solid #f0f0f5; }
-        .switch { position: relative; display: inline-block; width: 50px; height: 28px; }
+        .config-view { background: #fff; border-radius: 20px; padding: 30px; box-shadow: var(--shadow-soft); text-align: left; }
+        .setting-row { display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 1px solid #f0f0f5; }
+        .switch { position: relative; display: inline-block; width: 50px; height: 28px; flex-shrink: 0; }
         .switch input { opacity: 0; width: 0; height: 0; }
         .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 34px; }
         input:checked + .slider { background-color: var(--primary-color); }
         input:checked + .slider:before { transform: translateX(22px); }
 
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        /* ==================== 📱 Mobile Responsive Styles ==================== */
+        @media (max-width: 768px) {
+            /* 1. 顶部栏适配 */
+            .header { padding: 0 15px; height: 56px; }
+            .l1-nav-bar { margin-left: 10px; gap: 0; }
+            .nav-l1-top { padding: 5px 10px; font-size: 14px; }
+            /* 隐藏顶部导航的图标以节省空间 (可选) */
+            /* .nav-l1-top i { display: none; } */
 
+            /* 2. 侧边栏适配 (Overlay 模式) */
+            .sidebar-wrapper {
+                position: absolute;
+                top: 0;
+                left: 0;
+                height: 100%;
+                box-shadow: 2px 0 20px rgba(0,0,0,0.1);
+                /* 默认移出屏幕 */
+                transform: translateX(-100%);
+                width: 260px;
+            }
+            /* 手机端 "隐藏" 其实是移出屏幕，而不是 width:0 */
+            .sidebar-hidden { width: 260px; transform: translateX(-100%); }
+            /* 激活时滑入 */
+            .sidebar-wrapper.visible { transform: translateX(0); }
+            
+            /* 遮罩层 (侧边栏打开时背景变暗) */
+            .sidebar-overlay {
+                position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+                background: rgba(0,0,0,0.3); z-index: 80; display: none;
+            }
+            .sidebar-overlay.active { display: block; }
+
+            /* 3. 内容区域适配 */
+            .main-content { padding: 20px 15px; }
+            .page-title { font-size: 24px; }
+            .page-header-text { margin-bottom: 25px; }
+
+            /* 4. Network Map 适配 */
+            .dashboard-header { flex-direction: column; gap: 15px; margin-bottom: 30px; width: 100%; }
+            .stat-card { width: 100%; }
+
+            /* 拓扑图垂直堆叠 */
+            .router-node { width: 100%; margin-bottom: 40px; }
+            /* 连接线缩短 */
+            .router-node::after { height: 42px; bottom: -42px; }
+
+            .clients-grid { flex-direction: column; align-items: center; gap: 20px; }
+            /* 手机端去除横向连接线，改为垂直贯穿线 */
+            .clients-grid::before { 
+                width: 2px; height: 100%; top: -42px; left: 50%; transform: translateX(-50%); 
+                max-width: none; background: #E5E5EA; z-index: 0;
+            }
+            
+            .client-card { width: 100%; margin-bottom: 0; }
+            /* 调整连接线位置 */
+            .client-card::before { height: 20px; top: -20px; }
+            /* 最后一个卡片不需要向下的线? (这里实际上是背景线贯穿，不用特意处理) */
+
+            /* 5. 配置页适配 */
+            .config-view { padding: 20px; }
+            .setting-row { flex-direction: column; align-items: flex-start; gap: 10px; }
+            .setting-row input[type="text"] { width: 100% !important; }
+            .setting-row .switch { align-self: flex-end; }
+        }
     </style>
 </head>
 <body>
 
+    <div class="sidebar-overlay" id="sidebar-overlay" onclick="closeSidebar()"></div>
+
     <header class="header">
-        <div style="display: flex; align-items: center;">
+        <div style="display: flex; align-items: center; flex: 1; overflow: hidden;">
             <div class="logo">TP-Link</div>
             
             <div class="l1-nav-bar" id="l1-nav">
@@ -306,7 +308,7 @@
                     <i class="fas fa-wifi icon-top-purple"></i>WiFi Settings
                 </div>
                 <div class="nav-l1-top" data-id="Internet Connection" onclick="navToL1('Internet Connection', 'leaf', this)">
-                    <i class="fas fa-globe icon-top-teal"></i>Internet Connection
+                    <i class="fas fa-globe icon-top-teal"></i>Internet
                 </div>
                 
                 <div class="nav-l1-top" data-id="HomeShield" onclick="navToL1('HomeShield', 'parent', this)">
@@ -319,8 +321,7 @@
         </div>
 
         <div class="header-icons">
-            <div class="icon-btn" title="Language Settings"><i class="fas fa-globe"></i></div>
-            <div class="icon-btn" title="Accessibility Settings"><i class="fas fa-universal-access"></i></div>
+            <div class="icon-btn" title="Language"><i class="fas fa-globe"></i></div>
         </div>
     </header>
 
@@ -335,69 +336,22 @@
     </div>
 
     <script>
-        // === 数据定义 ===
+        // === 数据定义 (保持不变) ===
         const NAV_DATA = {
             "HomeShield": {
                 iconClass: 'fas fa-shield-alt icon-top-orange',
-                children: {
-                    "Security": { type: 'leaf' },
-                    "Parental Control": { type: 'leaf' }
-                }
+                children: { "Security": { type: 'leaf' }, "Parental Control": { type: 'leaf' } }
             },
             "Advanced": {
                 iconClass: 'fas fa-sliders-h icon-top-red',
                 children: {
-                    "Access Control": { type: 'leaf' },
-                    "EasyMesh": { type: 'leaf' },
-                    "QoS": { type: 'leaf' },
-                    "VPN": { type: 'leaf' },
-                    "ECO Mode": { type: 'leaf' },
-                    "TP-Link ID": { type: 'leaf' },
-                    "LAN Settings": { 
-                        type: 'parent', 
-                        children: {
-                            "Flow Controller": { type: 'leaf' },
-                            "Link Aggregation": { type: 'leaf' },
-                            "DHCP Server": { type: 'leaf' },
-                            "IPTV/VLAN": { type: 'leaf' }
-                        }
-                    },
-                    "WAN Settings": { 
-                        type: 'parent', 
-                        children: {
-                            "DDNS": { type: 'leaf' },
-                            "IPv6": { type: 'leaf' },
-                            "Port Forwarding": { type: 'leaf' },
-                            "Port Triggering": { type: 'leaf' },
-                            "UPnP": { type: 'leaf' },
-                            "DMZ": { type: 'leaf' },
-                            "Advanced(NAT)": { type: 'leaf' }
-                        }
-                    },
+                    "Access Control": { type: 'leaf' }, "EasyMesh": { type: 'leaf' }, "QoS": { type: 'leaf' }, "VPN": { type: 'leaf' },
+                    "ECO Mode": { type: 'leaf' }, "TP-Link ID": { type: 'leaf' },
+                    "LAN Settings": { type: 'parent', children: { "Flow Controller": { type: 'leaf' }, "DHCP Server": { type: 'leaf' } } },
+                    "WAN Settings": { type: 'parent', children: { "DDNS": { type: 'leaf' }, "IPv6": { type: 'leaf' }, "Port Forwarding": { type: 'leaf' } } },
                     "WPS": { type: 'leaf' },
-                    "Security Utilities": { 
-                        type: 'parent', 
-                        children: {
-                            "Firewall": { type: 'leaf' },
-                            "IP MAC Binding": { type: 'leaf' },
-                            "ALG": { type: 'leaf' },
-                            "DoH/DoT": { type: 'leaf' },
-                            "Device Isolation": { type: 'leaf' }
-                        }
-                    },
-                    "System": { 
-                        type: 'parent', 
-                        children: {
-                            "Firmware Update": { type: 'leaf' },
-                            "Backup Restore": { type: 'leaf' },
-                            "Reboot": { type: 'leaf' },
-                            "Administration": { type: 'leaf' },
-                            "Time Settings": { type: 'leaf' },
-                            "System Log": { type: 'leaf' },
-                            "Diagnostic Tools": { type: 'leaf' },
-                            "About": { type: 'leaf' }
-                        }
-                    }
+                    "Security Utilities": { type: 'parent', children: { "Firewall": { type: 'leaf' }, "IP MAC Binding": { type: 'leaf' } } },
+                    "System": { type: 'parent', children: { "Firmware Update": { type: 'leaf' }, "Reboot": { type: 'leaf' } } }
                 }
             }
         };
@@ -412,33 +366,63 @@
             ]
         };
 
-        let currentActiveGroup = null;
-
         // ==================== 逻辑控制 ====================
 
         function navToL1(title, type, el) {
             document.querySelectorAll('.nav-l1-top').forEach(e => e.classList.remove('active'));
             el.classList.add('active');
+            
+            // 确保点击时该项目滚动到可视区域 (针对手机端)
+            el.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
 
             const sidebar = document.getElementById('sidebar-wrapper');
+            const overlay = document.getElementById('sidebar-overlay');
             
             if (type === 'parent') {
-                sidebar.classList.remove('sidebar-hidden');
+                // 桌面端逻辑
+                if (window.innerWidth > 768) {
+                    sidebar.classList.remove('sidebar-hidden');
+                } else {
+                    // 手机端逻辑：滑出
+                    sidebar.classList.add('visible');
+                    sidebar.classList.remove('sidebar-hidden');
+                    overlay.classList.add('active');
+                }
+
                 renderSidebar(title);
+                
+                // 默认选中第一个
                 const firstL2 = Object.keys(NAV_DATA[title].children)[0];
-                if (firstL2) navToL2(firstL2, 'leaf'); 
-                currentActiveGroup = title;
+                if (firstL2) {
+                    // 仅高亮不跳转，避免手机端误触
+                     document.querySelectorAll('#sidebar-nav .nav-l2-item').forEach(e => e.classList.remove('active'));
+                }
             } else {
                 sidebar.classList.add('sidebar-hidden');
+                sidebar.classList.remove('visible');
+                overlay.classList.remove('active');
                 renderContent(title, 'leaf', null);
-                currentActiveGroup = null;
             }
+        }
+
+        // 手机端专用：关闭侧边栏
+        function closeSidebar() {
+            const sidebar = document.getElementById('sidebar-wrapper');
+            const overlay = document.getElementById('sidebar-overlay');
+            sidebar.classList.remove('visible');
+            overlay.classList.remove('active');
         }
 
         function navToL2(title, type, el) {
             document.querySelectorAll('#sidebar-nav .nav-l2-item, #sidebar-nav .nav-l3-item').forEach(e => e.classList.remove('active'));
             if (el) el.classList.add('active');
-            renderContent(title, 'leaf', null); 
+            
+            renderContent(title, 'leaf', null);
+            
+            // 手机端点击二级菜单后自动收起侧边栏
+            if (window.innerWidth <= 768) {
+                closeSidebar();
+            }
         }
 
         function toggleGroupL2(id, el) {
@@ -457,19 +441,15 @@
         function renderSidebar(groupKey) {
             const nav = NAV_DATA[groupKey];
             let html = '';
-            
             for (const l2Key in nav.children) {
                 const l2 = nav.children[l2Key];
                 if (l2.type === 'parent') {
                     html += `
                         <div class="nav-l2-item parent" onclick="toggleGroupL2('${l2Key.replace(/\s/g, '')}', this)">
-                            <span>${l2Key}</span>
-                            <i class="fas fa-chevron-down chevron"></i>
+                            <span>${l2Key}</span><i class="fas fa-chevron-down chevron"></i>
                         </div>
                         <div class="nav-l3-container" id="group-${l2Key.replace(/\s/g, '')}">
-                            ${Object.keys(l2.children).map(l3Key => 
-                                `<div class="nav-l3-item" onclick="navToL2('${l3Key}', 'leaf', this)">${l3Key}</div>`
-                            ).join('')}
+                            ${Object.keys(l2.children).map(l3Key => `<div class="nav-l3-item" onclick="navToL2('${l3Key}', 'leaf', this)">${l3Key}</div>`).join('')}
                         </div>
                     `;
                 } else {
@@ -481,9 +461,7 @@
 
         function renderContent(title, type, parentTitle) {
             const container = document.getElementById('content-area');
-            // 包装一层 content-wrapper 方便居中控制
             let contentHtml = '';
-
             if (title === 'Network Map') {
                 contentHtml = renderNetworkMap();
             } else {
@@ -495,21 +473,12 @@
                     <div class="config-view">
                          <h3 style="margin-top:0;">${title} Settings</h3>
                          <div class="setting-row">
-                            <div class="setting-info">
-                                <h4>Enable ${title} Feature</h4>
-                                <p>Toggle to enable or disable this function.</p>
-                            </div>
-                            <label class="switch">
-                                <input type="checkbox" checked>
-                                <span class="slider"></span>
-                            </label>
+                            <div class="setting-info"><h4>Enable Feature</h4><p>Enable or disable.</p></div>
+                            <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
                         </div>
                         <div class="setting-row" style="border-bottom:none;">
-                            <div class="setting-info">
-                                <h4>Simple Configuration Item</h4>
-                                <p>Enter your setting value here.</p>
-                            </div>
-                            <input type="text" value="Default Value" style="padding:8px; border:1px solid #ddd; border-radius:6px; outline:none; width: 250px;">
+                            <div class="setting-info"><h4>Config Item</h4><p>Enter value.</p></div>
+                            <input type="text" value="Default" style="padding:10px; border:1px solid #ddd; border-radius:8px; width: 100%;">
                         </div>
                     </div>
                 `;
@@ -533,9 +502,7 @@
                         <div class="client-status status-online" style="background: rgba(52, 199, 89, 0.1); color: #34C759; font-size: 10px; padding: 2px 8px; border-radius: 10px; margin-left: auto;">${c.con}</div>
                     </div>
                     <div class="traffic-viz">
-                        <div class="donut" style="background: ${gradStyle}">
-                            <div class="donut-inner">Traffic</div>
-                        </div>
+                        <div class="donut" style="background: ${gradStyle}"><div class="donut-inner">Traffic</div></div>
                         <div class="app-list">
                             ${c.apps.map(app => `<div class="app-item"><span><span class="dot" style="background:${app.c}"></span>${app.n}</span><span>${app.p}%</span></div>`).join('')}
                         </div>
@@ -546,7 +513,7 @@
             return `
                 <div class="page-header-text">
                     <h1 class="page-title">Network Map</h1>
-                    <p class="page-desc">Real-time topology and traffic insights.</p>
+                    <p class="page-desc">Real-time topology.</p>
                 </div>
                 
                 <div class="dashboard-header">

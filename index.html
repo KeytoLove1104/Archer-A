@@ -11,7 +11,7 @@
             --primary-color: #007AFF;
             --bg-body: #F2F5F9;
             --sidebar-bg: #FFFFFF;
-            --top-nav-bg: rgba(255, 255, 255, 0.9); /* 轻微玻璃拟态 */
+            --top-nav-bg: rgba(255, 255, 255, 0.9);
             --text-main: #1D1D1F;
             --text-sub: #86868B;
             --shadow-soft: 0 8px 30px rgba(0, 0, 0, 0.04);
@@ -53,7 +53,6 @@
             flex-shrink: 0;
         }
 
-        /* 艺术字 Logo */
         .logo {
             font-family: 'Futura', 'Avenir Next', sans-serif;
             font-weight: 800;
@@ -66,7 +65,7 @@
         }
         
         .header-icons { display: flex; gap: 20px; }
-        .icon-btn { /* Style retained from Demo B for consistency */
+        .icon-btn {
             width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; 
             justify-content: center; cursor: pointer; color: var(--text-sub); transition: all 0.2s; 
             background: rgba(255,255,255,0.5);
@@ -86,15 +85,14 @@
             display: flex;
             align-items: center;
             gap: 8px;
-            font-size: 18px; /* 大号字体 */
-            font-weight: 700; /* 加粗 */
+            font-size: 18px;
+            font-weight: 700;
             color: var(--text-sub);
             transition: all 0.2s;
         }
         .nav-l1-top:hover { background: rgba(0,0,0,0.03); }
         .nav-l1-top.active { color: var(--primary-color); background: rgba(0, 122, 255, 0.1); }
 
-        /* L1 顶部图标的颜色 */
         .nav-l1-top i { font-size: 16px; }
         .icon-top-blue { color: var(--icon-blue); }
         .icon-top-purple { color: var(--icon-purple); }
@@ -105,7 +103,6 @@
         /* ==================== 3. 主容器与动态侧边栏 ==================== */
         .container { display: flex; flex: 1; overflow: hidden; }
 
-        /* 侧边栏容器：用于动态显示/隐藏 */
         .sidebar-wrapper {
             width: var(--sidebar-width);
             background: var(--sidebar-bg);
@@ -115,7 +112,6 @@
             flex-shrink: 0;
             transition: width 0.3s ease-in-out;
         }
-        /* 隐藏侧边栏，宽度为 0，内容区域自动拉伸 */
         .sidebar-hidden {
             width: 0;
             padding: 0;
@@ -123,7 +119,6 @@
             border-right: none;
         }
 
-        /* L2/L3 样式 */
         .nav-l2-item {
             padding: 10px 24px;
             cursor: pointer;
@@ -140,12 +135,9 @@
         .nav-l2-item.parent .chevron { transition: transform 0.3s; }
         .nav-l2-item.parent.expanded .chevron { transform: rotate(180deg); }
 
-        /* L3 容器 */
-        .nav-l3-container {
-            display: none; /* 默认隐藏 */
-        }
+        .nav-l3-container { display: none; }
         .nav-l3-item {
-            padding: 8px 24px 8px 48px; /* 缩进 */
+            padding: 8px 24px 8px 48px;
             font-size: 14px;
             color: var(--text-sub);
             transition: all 0.2s;
@@ -159,26 +151,144 @@
             flex: 1;
             padding: 40px;
             overflow-y: auto;
+            /* 确保内容居中 */
+            display: flex;
+            flex-direction: column;
+            align-items: center; 
+        }
+
+        /* 统一内容最大宽度容器，防止大屏散开 */
+        .content-wrapper {
+            width: 100%;
+            max-width: 1100px; /* 限制最大宽度，保持和谐 */
         }
         
-        /* 保持 Network Map 的特殊样式 */
-        .dashboard-header, .stat-card, .topology-area, .router-node, .clients-grid, .client-card, .client-top, .traffic-viz, .donut, .app-list { /* ... (Include all Network Map specific CSS here) */
-            /* Using a placeholder to avoid excessive repetition */
-        }
-        /* Add essential Network Map CSS for functionality */
-        .stat-card { flex: 1; background: #fff; padding: 20px; border-radius: var(--radius-l); box-shadow: var(--shadow-soft); display: flex; align-items: center; gap: 15px; }
-        .stat-icon { width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; }
-        .stat-val { font-size: 24px; font-weight: 800; font-family: 'Futura', sans-serif; }
-        .stat-label { font-size: 12px; color: var(--text-sub); }
-        .router-node { width: 300px; background: #fff; border: 2px solid var(--primary-color); border-radius: var(--radius-l); padding: 20px; text-align: center; position: relative; z-index: 2; margin-bottom: 50px; box-shadow: 0 10px 40px rgba(0, 122, 255, 0.15); }
-        .router-node::after { content: ''; position: absolute; bottom: -52px; left: 50%; width: 2px; height: 52px; background: #ddd; z-index: 1; }
-        .clients-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 30px; width: 100%; position: relative; }
-        .clients-grid::before { content: ''; position: absolute; top: -25px; left: 15%; right: 15%; height: 2px; background: #ddd; z-index: 1; }
-        .client-card::before { content: ''; position: absolute; top: -27px; left: 50%; width: 2px; height: 27px; background: #ddd; }
-        .donut { width: 60px; height: 60px; border-radius: 50%; position: relative; flex-shrink: 0; }
-        .donut-inner { position: absolute; top: 8px; left: 8px; right: 8px; bottom: 8px; background: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; color: var(--text-sub); }
+        /* 页面标题居中 */
+        .page-header-text { text-align: center; margin-bottom: 40px; }
         .page-title { font-size: 32px; font-weight: 800; margin: 0 0 8px 0; color: var(--text-main); }
         .page-desc { color: var(--text-sub); margin: 0; }
+
+        /* ==================== Network Map 专属居中样式 ==================== */
+        
+        /* 仪表盘 */
+        .dashboard-header { 
+            display: flex; 
+            gap: 24px; 
+            margin-bottom: 50px; 
+            justify-content: center; /* 居中对齐 */
+        }
+        .stat-card { 
+            width: 280px; /* 固定宽度，更整齐 */
+            background: #fff; 
+            padding: 24px; 
+            border-radius: var(--radius-l); 
+            box-shadow: var(--shadow-soft); 
+            display: flex; 
+            align-items: center; 
+            gap: 15px; 
+            transition: transform 0.2s;
+        }
+        .stat-card:hover { transform: translateY(-2px); }
+        .stat-icon { width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; }
+        .stat-val { font-size: 24px; font-weight: 800; font-family: 'Futura', sans-serif; }
+        .stat-label { font-size: 12px; color: var(--text-sub); margin-bottom: 4px; }
+
+        /* 拓扑区域 */
+        .topology-area { 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            width: 100%;
+        }
+
+        /* 路由器节点 */
+        .router-node { 
+            width: 320px; 
+            background: #fff; 
+            border: 2px solid var(--primary-color); 
+            border-radius: var(--radius-l); 
+            padding: 24px; 
+            text-align: center; 
+            position: relative; 
+            z-index: 2; 
+            margin-bottom: 60px; /* 增加间距 */
+            box-shadow: 0 10px 40px rgba(0, 122, 255, 0.15); 
+        }
+        .router-node::after { 
+            content: ''; 
+            position: absolute; 
+            bottom: -62px; /* 延伸到下方 */
+            left: 50%; 
+            width: 2px; 
+            height: 62px; 
+            background: #E5E5EA; 
+            z-index: 1; 
+        }
+
+        /* 客户端网格 - 改为 Flexbox 实现完美居中 */
+        .clients-grid { 
+            display: flex;
+            justify-content: center; /* 居中 */
+            flex-wrap: wrap;
+            gap: 30px; 
+            width: 100%; 
+            position: relative; 
+        }
+        /* 连接横线 */
+        .clients-grid::before { 
+            content: ''; 
+            position: absolute; 
+            top: -30px; 
+            /* 限制横线宽度，使其不显得太宽 */
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80%; /* 横跨 80% 的区域 */
+            max-width: 600px;
+            height: 2px; 
+            background: #E5E5EA; 
+            z-index: 1; 
+        }
+
+        .client-card { 
+            background: #fff; 
+            padding: 20px; 
+            border-radius: 16px; 
+            box-shadow: var(--shadow-soft); 
+            position: relative; 
+            width: 300px; /* 固定宽度，整齐 */
+            flex-shrink: 0;
+            transition: all 0.2s;
+        }
+        .client-card:hover { transform: translateY(-4px); box-shadow: 0 15px 35px rgba(0,0,0,0.06); }
+        .client-card::before { 
+            content: ''; 
+            position: absolute; 
+            top: -32px; 
+            left: 50%; 
+            width: 2px; 
+            height: 32px; 
+            background: #E5E5EA; 
+        }
+
+        /* 客户端内部样式 */
+        .client-top { display: flex; align-items: center; gap: 12px; border-bottom: 1px solid #f0f0f5; padding-bottom: 12px; margin-bottom: 12px; }
+        .traffic-viz { display: flex; align-items: center; gap: 15px; }
+        .donut { width: 60px; height: 60px; border-radius: 50%; position: relative; flex-shrink: 0; }
+        .donut-inner { position: absolute; top: 8px; left: 8px; right: 8px; bottom: 8px; background: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; color: var(--text-sub); }
+        .app-list { flex: 1; font-size: 11px; }
+        .app-item { display: flex; justify-content: space-between; margin-bottom: 4px; align-items: center; }
+        .dot { width: 8px; height: 8px; border-radius: 2px; display: inline-block; margin-right: 4px; }
+
+        /* 配置视图 */
+        .config-view { background: #fff; border-radius: 20px; padding: 40px; box-shadow: var(--shadow-soft); animation: fadeIn 0.3s ease; text-align: left; }
+        .setting-row { display: flex; justify-content: space-between; align-items: center; padding: 20px 0; border-bottom: 1px solid #f0f0f5; }
+        .switch { position: relative; display: inline-block; width: 50px; height: 28px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 34px; }
+        input:checked + .slider { background-color: var(--primary-color); }
+        input:checked + .slider:before { transform: translateX(22px); }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
     </style>
 </head>
@@ -261,7 +371,7 @@
                             "Port Triggering": { type: 'leaf' },
                             "UPnP": { type: 'leaf' },
                             "DMZ": { type: 'leaf' },
-                            "Advanced(NAT/Internet Port Negotiation)": { type: 'leaf' }
+                            "Advanced(NAT)": { type: 'leaf' }
                         }
                     },
                     "WPS": { type: 'leaf' },
@@ -283,9 +393,6 @@
                             "Reboot": { type: 'leaf' },
                             "Administration": { type: 'leaf' },
                             "Time Settings": { type: 'leaf' },
-                            "Voice Assistant": { type: 'leaf' },
-                            "LED Control": { type: 'leaf' },
-                            "Operation Mode": { type: 'leaf' },
                             "System Log": { type: 'leaf' },
                             "Diagnostic Tools": { type: 'leaf' },
                             "About": { type: 'leaf' }
@@ -297,7 +404,7 @@
 
         const networkMapData = {
             global: { download: '945 Mbps', upload: '95 Mbps' },
-            router: { name: 'TP-Link Router', ip: '192.168.0.1' },
+            router: { name: 'TP-Link BE800', ip: '192.168.0.1' },
             clients: [
                 { name: "iPhone 15 Pro", type: "mobile", icon: "fa-mobile-alt", con: "Wi-Fi 6", ip: "192.168.0.101", apps: [ {n:"WeChat", p:42, c:"#07C160"}, {n:"TikTok", p:30, c:"#111"}, {n:"Other", p:28, c:"#ddd"} ] },
                 { name: "MacBook Air", type: "laptop", icon: "fa-laptop", con: "Wi-Fi 6", ip: "192.168.0.102", apps: [ {n:"Zoom", p:60, c:"#2D8CFF"}, {n:"Chrome", p:25, c:"#FFD000"}, {n:"Other", p:15, c:"#ddd"} ] },
@@ -305,52 +412,37 @@
             ]
         };
 
-        let currentActiveGroup = null; // 记录当前激活的顶部父节点
+        let currentActiveGroup = null;
 
         // ==================== 逻辑控制 ====================
 
-        // L1 顶部导航点击处理
         function navToL1(title, type, el) {
-            // 顶部激活状态管理
             document.querySelectorAll('.nav-l1-top').forEach(e => e.classList.remove('active'));
             el.classList.add('active');
 
             const sidebar = document.getElementById('sidebar-wrapper');
             
-            // 1. 如果是父节点 (HomeShield/Advanced)
             if (type === 'parent') {
-                sidebar.classList.remove('sidebar-hidden'); // 显示侧边栏
+                sidebar.classList.remove('sidebar-hidden');
                 renderSidebar(title);
-                // 默认激活侧边栏的第一个 L2 项
                 const firstL2 = Object.keys(NAV_DATA[title].children)[0];
-                if (firstL2) {
-                    navToL2(firstL2, 'leaf'); 
-                }
+                if (firstL2) navToL2(firstL2, 'leaf'); 
                 currentActiveGroup = title;
-            } 
-            // 2. 如果是叶节点 (Network Map, WiFi, Internet)
-            else {
-                sidebar.classList.add('sidebar-hidden'); // 隐藏侧边栏
+            } else {
+                sidebar.classList.add('sidebar-hidden');
                 renderContent(title, 'leaf', null);
                 currentActiveGroup = null;
             }
         }
 
-        // 侧边栏 L2/L3 节点点击处理
         function navToL2(title, type, el) {
-            // 清除侧边栏所有激活状态
             document.querySelectorAll('#sidebar-nav .nav-l2-item, #sidebar-nav .nav-l3-item').forEach(e => e.classList.remove('active'));
-            
             if (el) el.classList.add('active');
-            
-            // 渲染内容 (L2/L3 在此方案中都是内容叶节点)
             renderContent(title, 'leaf', null); 
         }
 
-        // L2 父节点 (在侧边栏中) 展开/收起 L3
         function toggleGroupL2(id, el) {
             const container = document.getElementById('group-' + id);
-            
             if (container.style.display === 'block') {
                 container.style.display = 'none';
                 el.classList.remove('expanded');
@@ -362,45 +454,40 @@
 
         // ==================== 渲染函数 ====================
 
-        // 渲染整个侧边栏
         function renderSidebar(groupKey) {
             const nav = NAV_DATA[groupKey];
             let html = '';
             
             for (const l2Key in nav.children) {
                 const l2 = nav.children[l2Key];
-                
-                // L2 是 L3 的父节点 (可展开)
                 if (l2.type === 'parent') {
                     html += `
-                        <div class="nav-l2-item parent" onclick="toggleGroupL2('${l2Key}', this)">
+                        <div class="nav-l2-item parent" onclick="toggleGroupL2('${l2Key.replace(/\s/g, '')}', this)">
                             <span>${l2Key}</span>
                             <i class="fas fa-chevron-down chevron"></i>
                         </div>
-                        <div class="nav-l3-container" id="group-${l2Key}">
+                        <div class="nav-l3-container" id="group-${l2Key.replace(/\s/g, '')}">
                             ${Object.keys(l2.children).map(l3Key => 
                                 `<div class="nav-l3-item" onclick="navToL2('${l3Key}', 'leaf', this)">${l3Key}</div>`
                             ).join('')}
                         </div>
                     `;
-                } 
-                // L2 是叶节点 (可点击)
-                else {
+                } else {
                     html += `<div class="nav-l2-item" onclick="navToL2('${l2Key}', 'leaf', this)">${l2Key}</div>`;
                 }
             }
             document.getElementById('sidebar-nav').innerHTML = html;
         }
 
-        // 渲染主内容区域 (Leaf nodes only in this solution)
         function renderContent(title, type, parentTitle) {
             const container = document.getElementById('content-area');
+            // 包装一层 content-wrapper 方便居中控制
+            let contentHtml = '';
 
             if (title === 'Network Map') {
-                renderNetworkMap(container);
+                contentHtml = renderNetworkMap();
             } else {
-                // 通用配置页面 (L1 Leaf 或 L2/L3 Leaf)
-                container.innerHTML = `
+                contentHtml = `
                     <div class="page-header-text">
                         <h1 class="page-title">${title}</h1>
                         <p class="page-desc">Configuration panel for ${title}.</p>
@@ -417,24 +504,23 @@
                                 <span class="slider"></span>
                             </label>
                         </div>
-
                         <div class="setting-row" style="border-bottom:none;">
                             <div class="setting-info">
                                 <h4>Simple Configuration Item</h4>
                                 <p>Enter your setting value here.</p>
                             </div>
-                            <input type="text" value="Default Value" style="padding:8px; border:1px solid #ddd; border-radius:6px; outline:none;">
+                            <input type="text" value="Default Value" style="padding:8px; border:1px solid #ddd; border-radius:6px; outline:none; width: 250px;">
                         </div>
                     </div>
                 `;
             }
+            container.innerHTML = `<div class="content-wrapper">${contentHtml}</div>`;
         }
         
-        // Network Map 渲染函数 (简化版，仅保留结构和关键样式)
-        function renderNetworkMap(container) {
+        function renderNetworkMap() {
              const data = networkMapData;
             let clientsHtml = data.clients.map(c => {
-                let gradStyle = ''; // Simulating conic gradient based on app data
+                let gradStyle = ''; 
                 if(c.name.includes("iPhone")) gradStyle = "conic-gradient(#07C160 0% 42%, #000 42% 72%, #ddd 72% 100%)";
                 if(c.name.includes("Mac")) gradStyle = "conic-gradient(#2D8CFF 0% 60%, #FFD000 60% 85%, #ddd 85% 100%)";
                 if(c.name.includes("TV")) gradStyle = "conic-gradient(#E50914 0% 80%, #ddd 80% 100%)";
@@ -457,7 +543,7 @@
                 </div>`;
             }).join('');
 
-            container.innerHTML = `
+            return `
                 <div class="page-header-text">
                     <h1 class="page-title">Network Map</h1>
                     <p class="page-desc">Real-time topology and traffic insights.</p>
@@ -479,7 +565,7 @@
                         <i class="fas fa-router" style="font-size:32px; color:var(--primary-color); margin-bottom:8px;"></i>
                         <h3 style="margin:0; font-size:16px;">${data.router.name}</h3>
                         <div style="font-size:12px; color:#999; margin-top:4px;">${data.router.ip}</div>
-                        <span class="client-status status-online" style="background: rgba(52, 199, 89, 0.1); color: #34C759; display:inline-block; margin-top:8px;">Internet Online</span>
+                        <span class="client-status status-online" style="display:inline-block; margin-top:8px;">Internet Online</span>
                     </div>
                     
                     <div class="clients-grid">
@@ -489,8 +575,6 @@
             `;
         }
 
-
-        // 初始化：默认加载 Network Map
         window.onload = function() {
             renderContent('Network Map', 'leaf', null);
         };

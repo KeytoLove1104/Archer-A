@@ -1,550 +1,366 @@
 <!DOCTYPE html>
-<html lang="zh">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TP-Link Demo A: Mobile Responsive</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Deco Family Insight - Digital Biorhythm</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        /* ==================== 1. 全局变量与基础样式 ==================== */
-        :root {
-            --primary-color: #007AFF;
-            --bg-body: #F2F5F9;
-            --sidebar-bg: #FFFFFF;
-            --top-nav-bg: rgba(255, 255, 255, 0.95);
-            --text-main: #1D1D1F;
-            --text-sub: #86868B;
-            --shadow-soft: 0 8px 30px rgba(0, 0, 0, 0.04);
-            --radius-l: 16px;
-            --sidebar-width: 280px;
-            
-            /* L1 Icon Colors */
-            --icon-blue: #007AFF;
-            --icon-purple: #AF52DE;
-            --icon-teal: #30B0C7;
-            --icon-orange: #FF9500;
-            --icon-red: #FF3B30;
-        }
-
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            margin: 0;
-            background-color: var(--bg-body);
-            color: var(--text-main);
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-        }
-
-        /* ==================== 2. 顶部栏 (Header) ==================== */
-        .header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            height: 60px;
-            padding: 0 20px;
-            background: var(--top-nav-bg);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(0,0,0,0.05);
-            z-index: 100;
-            flex-shrink: 0;
-        }
-
-        .logo {
-            font-family: 'Futura', 'Avenir Next', sans-serif;
-            font-weight: 800;
-            font-size: 20px;
-            letter-spacing: -0.5px;
-            background: linear-gradient(135deg, #00C6FF, #0072FF);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            font-style: italic;
-            flex-shrink: 0;
-            margin-right: 15px;
-        }
-        
-        .header-icons { display: flex; gap: 10px; flex-shrink: 0; }
-        .icon-btn {
-            width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; 
-            justify-content: center; cursor: pointer; color: var(--text-sub); transition: all 0.2s; 
-            background: rgba(255,255,255,0.5);
-        }
-
-        /* L1 顶部导航 - 桌面端样式 */
-        .l1-nav-bar {
-            display: flex;
-            gap: 5px;
-            margin-left: 20px;
-            flex: 1;
-            overflow-x: auto; /* 允许横向滚动 */
-            scrollbar-width: none; /* Firefox 隐藏滚动条 */
-            -ms-overflow-style: none; /* IE/Edge 隐藏滚动条 */
-        }
-        .l1-nav-bar::-webkit-scrollbar { display: none; /* Chrome 隐藏滚动条 */ }
-
-        .nav-l1-top {
-            padding: 6px 12px;
-            border-radius: 8px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            font-size: 15px;
-            font-weight: 600;
-            color: var(--text-sub);
-            transition: all 0.2s;
-            white-space: nowrap; /* 防止换行 */
-        }
-        .nav-l1-top.active { color: var(--primary-color); background: rgba(0, 122, 255, 0.1); }
-        .nav-l1-top i { font-size: 14px; }
-        
-        .icon-top-blue { color: var(--icon-blue); }
-        .icon-top-purple { color: var(--icon-purple); }
-        .icon-top-teal { color: var(--icon-teal); }
-        .icon-top-orange { color: var(--icon-orange); }
-        .icon-top-red { color: var(--icon-red); }
-
-        /* ==================== 3. 主容器与动态侧边栏 ==================== */
-        .container { display: flex; flex: 1; overflow: hidden; position: relative; }
-
-        .sidebar-wrapper {
-            width: var(--sidebar-width);
-            background: var(--sidebar-bg);
-            border-right: 1px solid rgba(0,0,0,0.05);
-            padding: 24px 0;
-            overflow-y: auto;
-            flex-shrink: 0;
-            transition: transform 0.3s ease-in-out, width 0.3s;
-            z-index: 90;
-        }
-        
-        /* 桌面端隐藏逻辑 */
-        .sidebar-hidden {
-            width: 0;
-            padding: 0;
-            overflow: hidden;
-            border-right: none;
-        }
-
-        .nav-l2-item {
-            padding: 12px 24px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            font-size: 15px;
-            font-weight: 500;
-            color: var(--text-main);
-        }
-        .nav-l2-item.active { background: rgba(0, 122, 255, 0.1); color: var(--primary-color); border-left: 3px solid var(--primary-color); padding-left: 21px; font-weight: 600; }
-        .nav-l2-item.parent .chevron { transition: transform 0.3s; }
-        .nav-l2-item.parent.expanded .chevron { transform: rotate(180deg); }
-
-        .nav-l3-container { display: none; }
-        .nav-l3-item {
-            padding: 10px 24px 10px 48px;
-            font-size: 14px;
-            color: var(--text-sub);
-        }
-        .nav-l3-item.active { background: rgba(0, 122, 255, 0.05); color: var(--primary-color); font-weight: 500; }
-
-        /* 内容区域 */
-        .main-content {
-            flex: 1;
-            padding: 40px;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            align-items: center; 
-            width: 100%;
-        }
-
-        .content-wrapper { width: 100%; max-width: 1100px; }
-        
-        .page-header-text { text-align: center; margin-bottom: 40px; }
-        .page-title { font-size: 28px; font-weight: 800; margin: 0 0 8px 0; color: var(--text-main); }
-        .page-desc { color: var(--text-sub); margin: 0; font-size: 14px; }
-
-        /* ==================== Network Map Styles ==================== */
-        .dashboard-header { display: flex; gap: 24px; margin-bottom: 50px; justify-content: center; }
-        .stat-card { 
-            width: 280px; background: #fff; padding: 20px; border-radius: 16px; 
-            box-shadow: var(--shadow-soft); display: flex; align-items: center; gap: 15px; 
-        }
-        .stat-icon { width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; }
-        .stat-val { font-size: 20px; font-weight: 800; font-family: 'Futura', sans-serif; }
-
-        .topology-area { display: flex; flex-direction: column; align-items: center; width: 100%; }
-        
-        .router-node { 
-            width: 300px; background: #fff; border: 2px solid var(--primary-color); 
-            border-radius: 16px; padding: 20px; text-align: center; position: relative; 
-            z-index: 2; margin-bottom: 60px; box-shadow: 0 10px 40px rgba(0, 122, 255, 0.15); 
-        }
-        .router-node::after { 
-            content: ''; position: absolute; bottom: -62px; left: 50%; width: 2px; 
-            height: 62px; background: #E5E5EA; z-index: 1; 
-        }
-
-        /* 客户端网格 */
-        .clients-grid { 
-            display: flex; justify-content: center; flex-wrap: wrap; gap: 30px; 
-            width: 100%; position: relative; 
-        }
-        /* 连接横线 (桌面端) */
-        .clients-grid::before { 
-            content: ''; position: absolute; top: -30px; left: 50%; transform: translateX(-50%);
-            width: 80%; max-width: 600px; height: 2px; background: #E5E5EA; z-index: 1; 
-        }
-
-        .client-card { 
-            background: #fff; padding: 16px; border-radius: 16px; box-shadow: var(--shadow-soft); 
-            position: relative; width: 300px; flex-shrink: 0; z-index: 2;
-        }
-        .client-card::before { 
-            content: ''; position: absolute; top: -32px; left: 50%; width: 2px; 
-            height: 32px; background: #E5E5EA; 
-        }
-
-        .client-top { display: flex; align-items: center; gap: 12px; border-bottom: 1px solid #f0f0f5; padding-bottom: 12px; margin-bottom: 12px; }
-        .traffic-viz { display: flex; align-items: center; gap: 15px; }
-        .donut { width: 50px; height: 50px; border-radius: 50%; position: relative; flex-shrink: 0; }
-        .donut-inner { position: absolute; top: 6px; left: 6px; right: 6px; bottom: 6px; background: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 9px; color: var(--text-sub); }
-        .app-list { flex: 1; font-size: 11px; }
-        .app-item { display: flex; justify-content: space-between; margin-bottom: 4px; align-items: center; }
-        .dot { width: 8px; height: 8px; border-radius: 2px; display: inline-block; margin-right: 4px; }
-
-        /* 配置视图 */
-        .config-view { background: #fff; border-radius: 20px; padding: 30px; box-shadow: var(--shadow-soft); text-align: left; }
-        .setting-row { display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 1px solid #f0f0f5; }
-        .switch { position: relative; display: inline-block; width: 50px; height: 28px; flex-shrink: 0; }
-        .switch input { opacity: 0; width: 0; height: 0; }
-        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 34px; }
-        input:checked + .slider { background-color: var(--primary-color); }
-        input:checked + .slider:before { transform: translateX(22px); }
-
-        /* ==================== 📱 Mobile Responsive Styles ==================== */
-        @media (max-width: 768px) {
-            /* 1. 顶部栏适配 */
-            .header { padding: 0 15px; height: 56px; }
-            .l1-nav-bar { margin-left: 10px; gap: 0; }
-            .nav-l1-top { padding: 5px 10px; font-size: 14px; }
-            /* 隐藏顶部导航的图标以节省空间 (可选) */
-            /* .nav-l1-top i { display: none; } */
-
-            /* 2. 侧边栏适配 (Overlay 模式) */
-            .sidebar-wrapper {
-                position: absolute;
-                top: 0;
-                left: 0;
-                height: 100%;
-                box-shadow: 2px 0 20px rgba(0,0,0,0.1);
-                /* 默认移出屏幕 */
-                transform: translateX(-100%);
-                width: 260px;
-            }
-            /* 手机端 "隐藏" 其实是移出屏幕，而不是 width:0 */
-            .sidebar-hidden { width: 260px; transform: translateX(-100%); }
-            /* 激活时滑入 */
-            .sidebar-wrapper.visible { transform: translateX(0); }
-            
-            /* 遮罩层 (侧边栏打开时背景变暗) */
-            .sidebar-overlay {
-                position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-                background: rgba(0,0,0,0.3); z-index: 80; display: none;
-            }
-            .sidebar-overlay.active { display: block; }
-
-            /* 3. 内容区域适配 */
-            .main-content { padding: 20px 15px; }
-            .page-title { font-size: 24px; }
-            .page-header-text { margin-bottom: 25px; }
-
-            /* 4. Network Map 适配 */
-            .dashboard-header { flex-direction: column; gap: 15px; margin-bottom: 30px; width: 100%; }
-            .stat-card { width: 100%; }
-
-            /* 拓扑图垂直堆叠 */
-            .router-node { width: 100%; margin-bottom: 40px; }
-            /* 连接线缩短 */
-            .router-node::after { height: 42px; bottom: -42px; }
-
-            .clients-grid { flex-direction: column; align-items: center; gap: 20px; }
-            /* 手机端去除横向连接线，改为垂直贯穿线 */
-            .clients-grid::before { 
-                width: 2px; height: 100%; top: -42px; left: 50%; transform: translateX(-50%); 
-                max-width: none; background: #E5E5EA; z-index: 0;
-            }
-            
-            .client-card { width: 100%; margin-bottom: 0; }
-            /* 调整连接线位置 */
-            .client-card::before { height: 20px; top: -20px; }
-            /* 最后一个卡片不需要向下的线? (这里实际上是背景线贯穿，不用特意处理) */
-
-            /* 5. 配置页适配 */
-            .config-view { padding: 20px; }
-            .setting-row { flex-direction: column; align-items: flex-start; gap: 10px; }
-            .setting-row input[type="text"] { width: 100% !important; }
-            .setting-row .switch { align-self: flex-end; }
-        }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f8fafc; }
+        .glass-card { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px); border: 1px solid rgba(226, 232, 240, 0.8); }
+        .pro-badge { background: linear-gradient(135deg, #6366f1, #8b5cf6); color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.6rem; font-weight: bold; letter-spacing: 0.05em; text-transform: uppercase; }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
     </style>
+    <script type="importmap">
+    {
+        "imports": {
+            "react": "https://esm.sh/react@18.2.0",
+            "react-dom/client": "https://esm.sh/react-dom@18.2.0/client",
+            "recharts": "https://esm.sh/recharts@2.12.0",
+            "lucide-react": "https://esm.sh/lucide-react@0.330.0"
+        }
+    }
+    </script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 </head>
 <body>
+    <div id="root"></div>
 
-    <div class="sidebar-overlay" id="sidebar-overlay" onclick="closeSidebar()"></div>
+    <script type="text/babel" data-type="module">
+        import React, { useState, useMemo } from 'react';
+        import { createRoot } from 'react-dom/client';
+        import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, BarChart, Bar } from 'recharts';
+        import { Activity, Zap, Clock, Users, ShieldCheck, Sparkles, Brain, Coffee, Moon, Sun, ArrowRight, Lock } from 'lucide-react';
 
-    <header class="header">
-        <div style="display: flex; align-items: center; flex: 1; overflow: hidden;">
-            <div class="logo">TP-Link</div>
-            
-            <div class="l1-nav-bar" id="l1-nav">
-                <div class="nav-l1-top active" data-id="Network Map" onclick="navToL1('Network Map', 'leaf', this)">
-                    <i class="fas fa-project-diagram icon-top-blue"></i>Network Map
-                </div>
-                <div class="nav-l1-top" data-id="WiFi Settings" onclick="navToL1('WiFi Settings', 'leaf', this)">
-                    <i class="fas fa-wifi icon-top-purple"></i>WiFi Settings
-                </div>
-                <div class="nav-l1-top" data-id="Internet Connection" onclick="navToL1('Internet Connection', 'leaf', this)">
-                    <i class="fas fa-globe icon-top-teal"></i>Internet
-                </div>
-                
-                <div class="nav-l1-top" data-id="HomeShield" onclick="navToL1('HomeShield', 'parent', this)">
-                    <i class="fas fa-shield-alt icon-top-orange"></i>HomeShield
-                </div>
-                <div class="nav-l1-top" data-id="Advanced" onclick="navToL1('Advanced', 'parent', this)">
-                    <i class="fas fa-sliders-h icon-top-red"></i>Advanced
-                </div>
-            </div>
-        </div>
-
-        <div class="header-icons">
-            <div class="icon-btn" title="Language"><i class="fas fa-globe"></i></div>
-        </div>
-    </header>
-
-    <div class="container">
-        
-        <aside class="sidebar-wrapper sidebar-hidden" id="sidebar-wrapper">
-            <nav id="sidebar-nav"></nav>
-        </aside>
-
-        <main class="main-content" id="content-area">
-            </main>
-    </div>
-
-    <script>
-        // === 数据定义 (保持不变) ===
-        const NAV_DATA = {
-            "HomeShield": {
-                iconClass: 'fas fa-shield-alt icon-top-orange',
-                children: { "Security": { type: 'leaf' }, "Parental Control": { type: 'leaf' } }
+        // --- Mock Data (The "Biorhythm" logic) ---
+        const FAMILY_DATA = {
+            summary: {
+                pulse: "Healthy & Balanced",
+                pulseDesc: "Today's digital biorhythm shows a balanced work-life split. Peak usage aligned with family time.",
+                focusScore: 72, // 0-100
+                chillScore: 28,
+                healthStatus: "Optimal",
+                totalTraffic: "18.5 GB"
             },
-            "Advanced": {
-                iconClass: 'fas fa-sliders-h icon-top-red',
-                children: {
-                    "Access Control": { type: 'leaf' }, "EasyMesh": { type: 'leaf' }, "QoS": { type: 'leaf' }, "VPN": { type: 'leaf' },
-                    "ECO Mode": { type: 'leaf' }, "TP-Link ID": { type: 'leaf' },
-                    "LAN Settings": { type: 'parent', children: { "Flow Controller": { type: 'leaf' }, "DHCP Server": { type: 'leaf' } } },
-                    "WAN Settings": { type: 'parent', children: { "DDNS": { type: 'leaf' }, "IPv6": { type: 'leaf' }, "Port Forwarding": { type: 'leaf' } } },
-                    "WPS": { type: 'leaf' },
-                    "Security Utilities": { type: 'parent', children: { "Firewall": { type: 'leaf' }, "IP MAC Binding": { type: 'leaf' } } },
-                    "System": { type: 'parent', children: { "Firmware Update": { type: 'leaf' }, "Reboot": { type: 'leaf' } } }
-                }
-            }
-        };
-
-        const networkMapData = {
-            global: { download: '945 Mbps', upload: '95 Mbps' },
-            router: { name: 'TP-Link BE800', ip: '192.168.0.1' },
-            clients: [
-                { name: "iPhone 15 Pro", type: "mobile", icon: "fa-mobile-alt", con: "Wi-Fi 6", ip: "192.168.0.101", apps: [ {n:"WeChat", p:42, c:"#07C160"}, {n:"TikTok", p:30, c:"#111"}, {n:"Other", p:28, c:"#ddd"} ] },
-                { name: "MacBook Air", type: "laptop", icon: "fa-laptop", con: "Wi-Fi 6", ip: "192.168.0.102", apps: [ {n:"Zoom", p:60, c:"#2D8CFF"}, {n:"Chrome", p:25, c:"#FFD000"}, {n:"Other", p:15, c:"#ddd"} ] },
-                { name: "Sony TV", type: "tv", icon: "fa-tv", con: "Wired", ip: "192.168.0.105", apps: [ {n:"Netflix", p:80, c:"#E50914"}, {n:"System", p:20, c:"#ddd"} ] }
+            timeline: [
+                { time: "06:45", event: "First Online", user: "Dad", icon: Sun, color: "text-orange-500" },
+                { time: "09:00", event: "Focus Mode Start", user: "Family", icon: Brain, color: "text-blue-500" },
+                { time: "19:30", event: "Peak Traffic", user: "Living Room TV", icon: Activity, color: "text-rose-500" },
+                { time: "23:15", event: "Last Offline", user: "Kevin", icon: Moon, color: "text-indigo-500" }
+            ],
+            members: [
+                { id: 1, name: "Arthur (Dad)", role: "Admin", type: "Information Hunter", desc: "High consumption of News & Finance. Consistent routine.", activeHours: "07:00 - 22:30", color: "#3b82f6" },
+                { id: 2, name: "Molly (Mom)", role: "Manager", type: "Social Connector", desc: "Balanced mix of Social & Shopping. Evening relaxation peak.", activeHours: "08:30 - 23:00", color: "#ec4899" },
+                { id: 3, name: "Kevin (Son)", role: "User", type: "Virtual Explorer", desc: "High bandwidth gaming & video. Late night activity detected.", activeHours: "16:00 - 01:00", color: "#8b5cf6" },
+                { id: 4, name: "Timmy (Kid)", role: "Child", type: "Digital Learner", desc: "Strictly educational & kids content. Healthy limits.", activeHours: "17:00 - 20:00", color: "#10b981" }
+            ],
+            sync: [
+                { pair: ["Arthur", "Molly"], score: 85, label: "Sync Partners", desc: "Shared evening routine." },
+                { pair: ["Arthur", "Kevin"], score: 32, label: "Different Timezones", desc: "Kevin is active when Arthur sleeps." }
+            ],
+            chartData: [
+                { time: '6am', focus: 10, chill: 0 },
+                { time: '9am', focus: 80, chill: 10 },
+                { time: '12pm', focus: 40, chill: 30 },
+                { time: '3pm', focus: 70, chill: 20 },
+                { time: '6pm', focus: 20, chill: 60 },
+                { time: '9pm', focus: 10, chill: 90 },
+                { time: '12am', focus: 5, chill: 40 },
             ]
         };
 
-        // ==================== 逻辑控制 ====================
+        // --- Components ---
 
-        function navToL1(title, type, el) {
-            document.querySelectorAll('.nav-l1-top').forEach(e => e.classList.remove('active'));
-            el.classList.add('active');
-            
-            // 确保点击时该项目滚动到可视区域 (针对手机端)
-            el.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+        const Card = ({ children, className = "" }) => (
+            <div className={`glass-card rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow duration-300 ${className}`}>
+                {children}
+            </div>
+        );
 
-            const sidebar = document.getElementById('sidebar-wrapper');
-            const overlay = document.getElementById('sidebar-overlay');
-            
-            if (type === 'parent') {
-                // 桌面端逻辑
-                if (window.innerWidth > 768) {
-                    sidebar.classList.remove('sidebar-hidden');
-                } else {
-                    // 手机端逻辑：滑出
-                    sidebar.classList.add('visible');
-                    sidebar.classList.remove('sidebar-hidden');
-                    overlay.classList.add('active');
-                }
+        const Badge = ({ children, color = "bg-slate-100 text-slate-600" }) => (
+            <span className={`px-2 py-1 rounded-md text-xs font-semibold ${color}`}>
+                {children}
+            </span>
+        );
 
-                renderSidebar(title);
-                
-                // 默认选中第一个
-                const firstL2 = Object.keys(NAV_DATA[title].children)[0];
-                if (firstL2) {
-                    // 仅高亮不跳转，避免手机端误触
-                     document.querySelectorAll('#sidebar-nav .nav-l2-item').forEach(e => e.classList.remove('active'));
-                }
-            } else {
-                sidebar.classList.add('sidebar-hidden');
-                sidebar.classList.remove('visible');
-                overlay.classList.remove('active');
-                renderContent(title, 'leaf', null);
-            }
-        }
-
-        // 手机端专用：关闭侧边栏
-        function closeSidebar() {
-            const sidebar = document.getElementById('sidebar-wrapper');
-            const overlay = document.getElementById('sidebar-overlay');
-            sidebar.classList.remove('visible');
-            overlay.classList.remove('active');
-        }
-
-        function navToL2(title, type, el) {
-            document.querySelectorAll('#sidebar-nav .nav-l2-item, #sidebar-nav .nav-l3-item').forEach(e => e.classList.remove('active'));
-            if (el) el.classList.add('active');
-            
-            renderContent(title, 'leaf', null);
-            
-            // 手机端点击二级菜单后自动收起侧边栏
-            if (window.innerWidth <= 768) {
-                closeSidebar();
-            }
-        }
-
-        function toggleGroupL2(id, el) {
-            const container = document.getElementById('group-' + id);
-            if (container.style.display === 'block') {
-                container.style.display = 'none';
-                el.classList.remove('expanded');
-            } else {
-                container.style.display = 'block';
-                el.classList.add('expanded');
-            }
-        }
-
-        // ==================== 渲染函数 ====================
-
-        function renderSidebar(groupKey) {
-            const nav = NAV_DATA[groupKey];
-            let html = '';
-            for (const l2Key in nav.children) {
-                const l2 = nav.children[l2Key];
-                if (l2.type === 'parent') {
-                    html += `
-                        <div class="nav-l2-item parent" onclick="toggleGroupL2('${l2Key.replace(/\s/g, '')}', this)">
-                            <span>${l2Key}</span><i class="fas fa-chevron-down chevron"></i>
+        // 1. Daily Pulse Header
+        const DailyPulse = ({ data }) => (
+            <div className="mb-8">
+                <div className="flex items-end justify-between mb-4">
+                    <div>
+                        <div className="flex items-center gap-2 mb-1">
+                            <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+                            <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Today's Family Pulse</span>
                         </div>
-                        <div class="nav-l3-container" id="group-${l2Key.replace(/\s/g, '')}">
-                            ${Object.keys(l2.children).map(l3Key => `<div class="nav-l3-item" onclick="navToL2('${l3Key}', 'leaf', this)">${l3Key}</div>`).join('')}
-                        </div>
-                    `;
-                } else {
-                    html += `<div class="nav-l2-item" onclick="navToL2('${l2Key}', 'leaf', this)">${l2Key}</div>`;
-                }
-            }
-            document.getElementById('sidebar-nav').innerHTML = html;
-        }
-
-        function renderContent(title, type, parentTitle) {
-            const container = document.getElementById('content-area');
-            let contentHtml = '';
-            if (title === 'Network Map') {
-                contentHtml = renderNetworkMap();
-            } else {
-                contentHtml = `
-                    <div class="page-header-text">
-                        <h1 class="page-title">${title}</h1>
-                        <p class="page-desc">Configuration panel for ${title}.</p>
+                        <h1 className="text-3xl font-bold text-slate-800 tracking-tight">{data.summary.pulse}</h1>
+                        <p className="text-slate-500 mt-1">{data.summary.pulseDesc}</p>
                     </div>
-                    <div class="config-view">
-                         <h3 style="margin-top:0;">${title} Settings</h3>
-                         <div class="setting-row">
-                            <div class="setting-info"><h4>Enable Feature</h4><p>Enable or disable.</p></div>
-                            <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
-                        </div>
-                        <div class="setting-row" style="border-bottom:none;">
-                            <div class="setting-info"><h4>Config Item</h4><p>Enter value.</p></div>
-                            <input type="text" value="Default" style="padding:10px; border:1px solid #ddd; border-radius:8px; width: 100%;">
-                        </div>
+                    <div className="hidden md:block text-right">
+                        <div className="text-2xl font-bold text-slate-700">{data.summary.totalTraffic}</div>
+                        <div className="text-xs text-slate-400 uppercase">Total Data Flow</div>
                     </div>
-                `;
-            }
-            container.innerHTML = `<div class="content-wrapper">${contentHtml}</div>`;
-        }
-        
-        function renderNetworkMap() {
-             const data = networkMapData;
-            let clientsHtml = data.clients.map(c => {
-                let gradStyle = ''; 
-                if(c.name.includes("iPhone")) gradStyle = "conic-gradient(#07C160 0% 42%, #000 42% 72%, #ddd 72% 100%)";
-                if(c.name.includes("Mac")) gradStyle = "conic-gradient(#2D8CFF 0% 60%, #FFD000 60% 85%, #ddd 85% 100%)";
-                if(c.name.includes("TV")) gradStyle = "conic-gradient(#E50914 0% 80%, #ddd 80% 100%)";
-
-                return `
-                <div class="client-card">
-                    <div class="client-top">
-                        <i class="fas ${c.icon}" style="font-size:20px; color:#555"></i>
-                        <div><div style="font-weight:bold; font-size:14px;">${c.name}</div><div style="font-size:11px; color:#999;">${c.ip}</div></div>
-                        <div class="client-status status-online" style="background: rgba(52, 199, 89, 0.1); color: #34C759; font-size: 10px; padding: 2px 8px; border-radius: 10px; margin-left: auto;">${c.con}</div>
-                    </div>
-                    <div class="traffic-viz">
-                        <div class="donut" style="background: ${gradStyle}"><div class="donut-inner">Traffic</div></div>
-                        <div class="app-list">
-                            ${c.apps.map(app => `<div class="app-item"><span><span class="dot" style="background:${app.c}"></span>${app.n}</span><span>${app.p}%</span></div>`).join('')}
-                        </div>
-                    </div>
-                </div>`;
-            }).join('');
-
-            return `
-                <div class="page-header-text">
-                    <h1 class="page-title">Network Map</h1>
-                    <p class="page-desc">Real-time topology.</p>
                 </div>
                 
-                <div class="dashboard-header">
-                    <div class="stat-card">
-                        <div class="stat-icon" style="background:rgba(52,199,89,0.1); color:#34C759"><i class="fas fa-arrow-down"></i></div>
-                        <div><div class="stat-label">Download</div><div class="stat-val">${data.global.download}</div></div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-icon" style="background:rgba(0,122,255,0.1); color:#007AFF"><i class="fas fa-arrow-up"></i></div>
-                        <div><div class="stat-label">Upload</div><div class="stat-val">${data.global.upload}</div></div>
-                    </div>
+                {/* Visual Waveform (Simulated Area Chart) */}
+                <div className="h-48 w-full bg-white rounded-2xl p-4 shadow-sm border border-slate-100">
+                    <ResponsiveContainer width="100%" height="100%">
+                        <AreaChart data={data.chartData}>
+                            <defs>
+                                <linearGradient id="colorFocus" x1="0" y1="0" x2="0" y2="1">
+                                    <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3}/>
+                                    <stop offset="95%" stopColor="#3b82f6" stopOpacity={0}/>
+                                </linearGradient>
+                                <linearGradient id="colorChill" x1="0" y1="0" x2="0" y2="1">
+                                    <stop offset="5%" stopColor="#f59e0b" stopOpacity={0.3}/>
+                                    <stop offset="95%" stopColor="#f59e0b" stopOpacity={0}/>
+                                </linearGradient>
+                            </defs>
+                            <XAxis dataKey="time" axisLine={false} tickLine={false} tick={{fontSize: 12, fill: '#94a3b8'}} />
+                            <Tooltip contentStyle={{borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)'}} />
+                            <Area type="monotone" dataKey="focus" stackId="1" stroke="#3b82f6" fill="url(#colorFocus)" strokeWidth={2} name="Focus/Work" />
+                            <Area type="monotone" dataKey="chill" stackId="1" stroke="#f59e0b" fill="url(#colorChill)" strokeWidth={2} name="Chill/Media" />
+                        </AreaChart>
+                    </ResponsiveContainer>
                 </div>
+            </div>
+        );
 
-                <div class="topology-area">
-                    <div class="router-node">
-                        <i class="fas fa-router" style="font-size:32px; color:var(--primary-color); margin-bottom:8px;"></i>
-                        <h3 style="margin:0; font-size:16px;">${data.router.name}</h3>
-                        <div style="font-size:12px; color:#999; margin-top:4px;">${data.router.ip}</div>
-                        <span class="client-status status-online" style="display:inline-block; margin-top:8px;">Internet Online</span>
-                    </div>
-                    
-                    <div class="clients-grid">
-                        ${clientsHtml}
-                    </div>
+        // 2. Member Archetypes (Digital Persona)
+        const MemberArchetypes = ({ members }) => (
+            <div className="mb-8">
+                <h3 className="text-slate-700 font-bold text-lg mb-4 flex items-center gap-2">
+                    <Users size={18} /> Digital Personas <span className="text-slate-400 text-sm font-normal">(AI Inferred)</span>
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    {members.map(member => (
+                        <Card key={member.id} className="relative overflow-hidden group">
+                            <div className={`absolute top-0 left-0 w-1 h-full`} style={{backgroundColor: member.color}}></div>
+                            <div className="flex items-center gap-3 mb-3">
+                                <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-lg shadow-inner">
+                                    {/* Simple Avatar Placeholder */}
+                                    <img src={`https://api.dicebear.com/9.x/notionists/svg?seed=${member.name}`} alt={member.name} className="w-8 h-8" />
+                                </div>
+                                <div>
+                                    <div className="font-bold text-slate-800 text-sm">{member.name}</div>
+                                    <div className="text-[10px] text-slate-500 uppercase tracking-wide">{member.role}</div>
+                                </div>
+                            </div>
+                            <div className="mb-2">
+                                <span className="inline-block px-2 py-1 bg-slate-100 text-slate-700 text-xs font-bold rounded-md border border-slate-200">
+                                    {member.type}
+                                </span>
+                            </div>
+                            <p className="text-xs text-slate-500 leading-relaxed mb-3">
+                                {member.desc}
+                            </p>
+                            <div className="flex items-center gap-1 text-[10px] text-slate-400">
+                                <Clock size={10} /> Active: {member.activeHours}
+                            </div>
+                        </Card>
+                    ))}
                 </div>
-            `;
-        }
+            </div>
+        );
 
-        window.onload = function() {
-            renderContent('Network Map', 'leaf', null);
+        // 3. Sync & Balance (Two Column)
+        const SyncAndBalance = ({ sync, summary }) => {
+            const balanceData = [
+                { name: 'Focus (Work/Study)', value: summary.focusScore, color: '#3b82f6' },
+                { name: 'Chill (Media/Game)', value: summary.chillScore, color: '#f59e0b' },
+            ];
+
+            return (
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                    {/* Left: Focus Balance */}
+                    <Card className="md:col-span-1">
+                        <div className="flex justify-between items-start mb-2">
+                            <h3 className="font-bold text-slate-700 text-sm">Life/Tech Balance</h3>
+                            <Badge color="bg-blue-50 text-blue-600">Weekly</Badge>
+                        </div>
+                        <div className="h-40 relative">
+                            <ResponsiveContainer width="100%" height="100%">
+                                <PieChart>
+                                    <Pie data={balanceData} innerRadius={40} outerRadius={60} paddingAngle={5} dataKey="value">
+                                        {balanceData.map((entry, index) => (
+                                            <Cell key={`cell-${index}`} fill={entry.color} />
+                                        ))}
+                                    </Pie>
+                                </PieChart>
+                            </ResponsiveContainer>
+                            <div className="absolute inset-0 flex items-center justify-center flex-col">
+                                <span className="text-2xl font-bold text-slate-800">{summary.focusScore}%</span>
+                                <span className="text-[10px] text-slate-400 uppercase">Focus</span>
+                            </div>
+                        </div>
+                        <p className="text-xs text-center text-slate-500 mt-2">
+                            Good balance. 20% increase in productivity apps compared to last week.
+                        </p>
+                    </Card>
+
+                    {/* Right: Sync Radar / Connection */}
+                    <Card className="md:col-span-2">
+                         <div className="flex justify-between items-start mb-4">
+                            <h3 className="font-bold text-slate-700 text-lg flex items-center gap-2">
+                                <Sparkles size={18} className="text-purple-500"/> Family Sync Rate
+                            </h3>
+                            <button className="text-xs text-slate-400 hover:text-slate-600 flex items-center gap-1">
+                                View History <ArrowRight size={12}/>
+                            </button>
+                        </div>
+                        <div className="space-y-4">
+                            {sync.map((item, idx) => (
+                                <div key={idx} className="flex items-center gap-4">
+                                    <div className="flex -space-x-2">
+                                         <img src={`https://api.dicebear.com/9.x/notionists/svg?seed=${item.pair[0]}`} className="w-8 h-8 rounded-full bg-white border border-slate-200" />
+                                         <img src={`https://api.dicebear.com/9.x/notionists/svg?seed=${item.pair[1]}`} className="w-8 h-8 rounded-full bg-white border border-slate-200" />
+                                    </div>
+                                    <div className="flex-1">
+                                        <div className="flex justify-between mb-1">
+                                            <span className="text-sm font-bold text-slate-700">{item.label}</span>
+                                            <span className="text-sm font-mono text-slate-500">{item.score}%</span>
+                                        </div>
+                                        <div className="w-full bg-slate-100 rounded-full h-2">
+                                            <div className="h-2 rounded-full transition-all duration-1000" style={{width: `${item.score}%`, backgroundColor: item.score > 80 ? '#10b981' : '#f59e0b'}}></div>
+                                        </div>
+                                    </div>
+                                    <div className="text-xs text-slate-400 w-1/3 text-right hidden sm:block">
+                                        {item.desc}
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </Card>
+                </div>
+            );
         };
+
+        // 4. Timeline & Insight (Bottom Row)
+        const TimelineAndInsight = ({ timeline }) => (
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+                {/* Timeline */}
+                <Card className="lg:col-span-1 border-l-4 border-l-blue-500">
+                    <h3 className="font-bold text-slate-700 mb-4 flex items-center gap-2">
+                        <Clock size={18} /> Daily Timeline
+                    </h3>
+                    <div className="space-y-0 relative">
+                        {/* Vertical Line */}
+                        <div className="absolute left-3.5 top-2 bottom-2 w-[1px] bg-slate-200"></div>
+                        {timeline.map((item, idx) => (
+                            <div key={idx} className="flex gap-4 relative items-start pb-6 last:pb-0">
+                                <div className={`w-8 h-8 rounded-full bg-white border border-slate-100 shadow-sm flex items-center justify-center z-10 shrink-0 ${item.color}`}>
+                                    <item.icon size={14} />
+                                </div>
+                                <div>
+                                    <div className="text-xs font-mono text-slate-400 mb-0.5">{item.time}</div>
+                                    <div className="text-sm font-bold text-slate-700">{item.event}</div>
+                                    <div className="text-xs text-slate-500">{item.user}</div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </Card>
+
+                {/* AI Insight Letter */}
+                <Card className="lg:col-span-2 bg-gradient-to-br from-slate-800 to-slate-900 text-white border-none">
+                    <div className="flex justify-between items-start mb-6">
+                        <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center">
+                                <Sparkles size={20} className="text-yellow-400" />
+                            </div>
+                            <div>
+                                <h3 className="font-bold text-lg">Weekly Insight Letter</h3>
+                                <p className="text-slate-400 text-xs">Generated by Deco AI • Just now</p>
+                            </div>
+                        </div>
+                        <div className="pro-badge">PRO</div>
+                    </div>
+                    <div className="space-y-4 text-sm text-slate-300 font-light leading-relaxed">
+                        <p>
+                            <strong className="text-white font-medium">Dear Administrator,</strong>
+                        </p>
+                        <p>
+                            This week, your family digital biorhythm has been <span className="text-green-400">remarkably stable</span>. 
+                            We noticed a <strong>20% increase</strong> in educational content traffic from Timmy's device—a great sign of focus.
+                        </p>
+                        <p>
+                            However, there is a slight <span className="text-yellow-400">desynchronization</span> between you and Kevin. 
+                            His peak activity hours have shifted 2 hours later than usual (01:00 AM). 
+                            It might be worth checking if this impacts his sleep schedule.
+                        </p>
+                        <p>
+                            <strong>Recommendation:</strong> Consider enabling "Bedtime Mode" for the Teen Profile on school nights to gently align the family schedule.
+                        </p>
+                    </div>
+                    <div className="mt-6 pt-4 border-t border-white/10 flex gap-3">
+                        <button className="px-4 py-2 bg-white text-slate-900 rounded-lg text-xs font-bold hover:bg-slate-100 transition">
+                            Apply Bedtime Mode
+                        </button>
+                        <button className="px-4 py-2 bg-white/5 text-white rounded-lg text-xs font-bold hover:bg-white/10 transition">
+                            View Full Report
+                        </button>
+                    </div>
+                </Card>
+            </div>
+        );
+
+        // 5. Network Health (Utility Bar)
+        const NetworkHealth = () => (
+             <div className="bg-white rounded-xl p-4 shadow-sm border border-slate-100 flex flex-col md:flex-row items-center justify-between gap-4">
+                <div className="flex items-center gap-4">
+                    <div className="w-10 h-10 rounded-full bg-green-50 flex items-center justify-center">
+                        <ShieldCheck size={20} className="text-green-600" />
+                    </div>
+                    <div>
+                        <div className="font-bold text-slate-700 text-sm">Network Efficiency: Optimal</div>
+                        <div className="text-xs text-slate-500">No congestion detected during peak hours.</div>
+                    </div>
+                </div>
+                 <button className="flex items-center gap-2 px-4 py-2 bg-slate-50 text-slate-600 rounded-lg text-xs font-bold hover:bg-slate-100 transition group">
+                    <Zap size={14} className="group-hover:text-yellow-500 transition-colors" />
+                    <span>Run Speed Test</span>
+                </button>
+            </div>
+        );
+
+        const App = () => {
+            return (
+                <div className="min-h-screen p-4 md:p-8 max-w-7xl mx-auto">
+                    {/* Header */}
+                    <header className="flex justify-between items-center mb-8">
+                        <div className="flex items-center gap-2">
+                             <div className="w-8 h-8 bg-slate-900 rounded-lg flex items-center justify-center text-white font-bold">D</div>
+                             <span className="font-bold text-slate-700 tracking-tight">Deco <span className="text-slate-400 font-normal">Family Insight</span></span>
+                        </div>
+                        <div className="flex gap-4 text-sm font-medium text-slate-500">
+                            <span className="text-slate-900 cursor-pointer">Overview</span>
+                            <span className="hover:text-slate-700 cursor-pointer flex items-center gap-1">History <Lock size={12}/></span>
+                            <span className="hover:text-slate-700 cursor-pointer flex items-center gap-1">Settings</span>
+                        </div>
+                    </header>
+
+                    {/* Main Modules */}
+                    <main className="animate-fade-in-up">
+                        <DailyPulse data={FAMILY_DATA} />
+                        <MemberArchetypes members={FAMILY_DATA.members} />
+                        <SyncAndBalance sync={FAMILY_DATA.sync} summary={FAMILY_DATA.summary} />
+                        <TimelineAndInsight timeline={FAMILY_DATA.timeline} />
+                        <NetworkHealth />
+                    </main>
+
+                    {/* Footer */}
+                    <footer className="mt-12 text-center text-xs text-slate-400 pb-8">
+                        <p>Deco HomeShield Pro • Privacy Protected • AI Generated Analysis</p>
+                    </footer>
+                </div>
+            );
+        };
+
+        const root = createRoot(document.getElementById('root'));
+        root.render(<App />);
     </script>
 </body>
 </html>

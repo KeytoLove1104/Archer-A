@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TP-Link Demo A: Mobile Responsive</title>
+    <title>TP-Link Demo: Updated Hierarchy</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <style>
         /* ==================== 1. 全局变量与基础样式 ==================== */
@@ -148,6 +148,7 @@
             padding: 10px 24px 10px 48px;
             font-size: 14px;
             color: var(--text-sub);
+            cursor: pointer;
         }
         .nav-l3-item.active { background: rgba(0, 122, 255, 0.05); color: var(--primary-color); font-weight: 500; }
 
@@ -336,22 +337,83 @@
     </div>
 
     <script>
-        // === 数据定义 (保持不变) ===
+        // === 数据定义: 根据用户需求完全重写 ===
         const NAV_DATA = {
             "HomeShield": {
                 iconClass: 'fas fa-shield-alt icon-top-orange',
-                children: { "Security": { type: 'leaf' }, "Parental Control": { type: 'leaf' } }
+                children: { 
+                    "Security": { type: 'leaf' }, 
+                    "Parental Control": { type: 'leaf' } 
+                }
             },
             "Advanced": {
                 iconClass: 'fas fa-sliders-h icon-top-red',
                 children: {
-                    "Access Control": { type: 'leaf' }, "EasyMesh": { type: 'leaf' }, "QoS": { type: 'leaf' }, "VPN": { type: 'leaf' },
-                    "ECO Mode": { type: 'leaf' }, "TP-Link ID": { type: 'leaf' },
-                    "LAN Settings": { type: 'parent', children: { "Flow Controller": { type: 'leaf' }, "DHCP Server": { type: 'leaf' } } },
-                    "WAN Settings": { type: 'parent', children: { "DDNS": { type: 'leaf' }, "IPv6": { type: 'leaf' }, "Port Forwarding": { type: 'leaf' } } },
+                    // L2: Access Control
+                    "Access Control": { type: 'leaf' },
+                    // L2: EasyMesh
+                    "EasyMesh": { type: 'leaf' },
+                    // L2: QoS
+                    "QoS": { type: 'leaf' },
+                    // L2: VPN
+                    "VPN": { type: 'leaf' },
+                    // L2: ECO Mode
+                    "ECO Mode": { type: 'leaf' },
+                    // L2: TP-Link ID
+                    "TP-Link ID": { type: 'leaf' },
+                    // L2: LAN Settings (Has L3)
+                    "LAN Settings": { 
+                        type: 'parent', 
+                        children: { 
+                            "Flow Controller": { type: 'leaf' },
+                            "Link Aggregation": { type: 'leaf' },
+                            "DHCP Server": { type: 'leaf' },
+                            "IPTV/VLAN": { type: 'leaf' }
+                        } 
+                    },
+                    // L2: WAN Settings (Has L3)
+                    "WAN Settings": { 
+                        type: 'parent', 
+                        children: { 
+                            "DDNS": { type: 'leaf' }, 
+                            "IPv6": { type: 'leaf' }, 
+                            "Port Forwarding": { type: 'leaf' },
+                            "Port Triggering": { type: 'leaf' },
+                            "UPnP": { type: 'leaf' },
+                            "DMZ": { type: 'leaf' },
+                            "NAT / Port Negotiation": { type: 'leaf' } // Advanced(NAT/Internet Port Negotiation)
+                        } 
+                    },
+                    // L2: WPS
                     "WPS": { type: 'leaf' },
-                    "Security Utilities": { type: 'parent', children: { "Firewall": { type: 'leaf' }, "IP MAC Binding": { type: 'leaf' } } },
-                    "System": { type: 'parent', children: { "Firmware Update": { type: 'leaf' }, "Reboot": { type: 'leaf' } } }
+                    // L2: Security Utilities (Has L3)
+                    "Security Utilities": { 
+                        type: 'parent', 
+                        children: { 
+                            "Firewall": { type: 'leaf' }, 
+                            "IP-MAC Binding": { type: 'leaf' },
+                            "ALG": { type: 'leaf' },
+                            "DoH/DoT": { type: 'leaf' },
+                            "Device Isolation": { type: 'leaf' }
+                        } 
+                    },
+                    // L2: System (Has L3)
+                    "System": { 
+                        type: 'parent', 
+                        children: { 
+                            "Firmware Update": { type: 'leaf' }, 
+                            "Backup Restore": { type: 'leaf' },
+                            "Reboot": { type: 'leaf' },
+                            "Administration": { type: 'leaf' },
+                            "Time Settings": { type: 'leaf' },
+                            "Voice Assistant": { type: 'leaf' },
+                            "LED Control": { type: 'leaf' },
+                            "Operation Mode": { type: 'leaf' },
+                            "System Log": { type: 'leaf' },
+                            "Diagnostic Tools": { type: 'leaf' },
+                            "About": { type: 'leaf' }
+                        } 
+                    }
                 }
             }
         };
@@ -392,11 +454,10 @@
                 renderSidebar(title);
                 
                 // 默认选中第一个
-                const firstL2 = Object.keys(NAV_DATA[title].children)[0];
-                if (firstL2) {
-                    // 仅高亮不跳转，避免手机端误触
-                     document.querySelectorAll('#sidebar-nav .nav-l2-item').forEach(e => e.classList.remove('active'));
-                }
+                const firstL2Key = Object.keys(NAV_DATA[title].children)[0];
+                // 如果第一个是leaf，可以考虑高亮，暂不自动跳转内容
+                document.querySelectorAll('#sidebar-nav .nav-l2-item').forEach(e => e.classList.remove('active'));
+                
             } else {
                 sidebar.classList.add('sidebar-hidden');
                 sidebar.classList.remove('visible');
@@ -427,6 +488,7 @@
 
         function toggleGroupL2(id, el) {
             const container = document.getElementById('group-' + id);
+            // 简单的展开收起逻辑
             if (container.style.display === 'block') {
                 container.style.display = 'none';
                 el.classList.remove('expanded');
@@ -443,12 +505,15 @@
             let html = '';
             for (const l2Key in nav.children) {
                 const l2 = nav.children[l2Key];
+                // 生成唯一ID，去掉空格和特殊字符
+                const safeId = l2Key.replace(/[^a-zA-Z0-9]/g, '');
+
                 if (l2.type === 'parent') {
                     html += `
-                        <div class="nav-l2-item parent" onclick="toggleGroupL2('${l2Key.replace(/\s/g, '')}', this)">
+                        <div class="nav-l2-item parent" onclick="toggleGroupL2('${safeId}', this)">
                             <span>${l2Key}</span><i class="fas fa-chevron-down chevron"></i>
                         </div>
-                        <div class="nav-l3-container" id="group-${l2Key.replace(/\s/g, '')}">
+                        <div class="nav-l3-container" id="group-${safeId}">
                             ${Object.keys(l2.children).map(l3Key => `<div class="nav-l3-item" onclick="navToL2('${l3Key}', 'leaf', this)">${l3Key}</div>`).join('')}
                         </div>
                     `;
